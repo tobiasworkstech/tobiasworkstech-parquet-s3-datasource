@@ -1,0 +1,49 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Parquet S3",
+  "id": "tobiasworkstech-parquet-s3-datasource",
+  "metrics": true,
+  "backend": true,
+  "executable": "gpx_parquet_s3_datasource",
+  "alerting": false,
+  "annotations": false,
+  "logs": false,
+  "streaming": false,
+  "info": {
+    "description": "A Grafana datasource plugin for reading Parquet files stored in S3-compatible storage",
+    "author": {
+      "name": "TobiasWorksTech",
+      "url": "https://github.com/tobiasworkstech"
+    },
+    "keywords": [
+      "parquet",
+      "s3",
+      "minio",
+      "datasource",
+      "analytics"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/tobiasworkstech/grafana-parquet-s3-datasource"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/tobiasworkstech/grafana-parquet-s3-datasource/blob/main/README.md"
+      }
+    ],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2025-01-01"
+  },
+  "includes": [],
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

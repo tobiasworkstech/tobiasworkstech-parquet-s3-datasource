@@ -1,0 +1,75 @@
+# Multi-stage build for Grafana Parquet S3 Datasource Plugin
+
+# Stage 1: Build frontend
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app
+
+# Copy package files
+COPY plugin/package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy frontend source
+COPY plugin/src ./src
+COPY plugin/tsconfig.json ./
+COPY plugin/.config ./.config
+
+# Build frontend
+RUN npm run build
+
+# Stage 2: Build backend
+FROM golang:1.21-alpine AS backend-builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache git
+
+# Copy go module files
+COPY plugin/go.mod plugin/go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy backend source
+COPY plugin/pkg ./pkg
+
+# Build for Linux amd64 (most common deployment target)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o gpx_parquet_s3_datasource_linux_amd64 \
+    ./pkg
+
+# Build for Linux arm64
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build \
+    -ldflags="-w -s" \
+    -o gpx_parquet_s3_datasource_linux_arm64 \
+    ./pkg
+
+# Stage 3: Create final plugin distribution
+FROM alpine:latest
+
+WORKDIR /app/dist
+
+# Copy frontend build
+COPY --from=frontend-builder /app/dist .
+
+# Copy backend binaries
+COPY --from=backend-builder /app/gpx_parquet_s3_datasource_linux_amd64 .
+COPY --from=backend-builder /app/gpx_parquet_s3_datasource_linux_arm64 .
+
+# Create symlink for the appropriate architecture based on build platform
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+        ln -sf gpx_parquet_s3_datasource_linux_arm64 gpx_parquet_s3_datasource; \
+    else \
+        ln -sf gpx_parquet_s3_datasource_linux_amd64 gpx_parquet_s3_datasource; \
+    fi
+
+# Ensure all files are readable
+RUN chmod -R 755 /app/dist
+
+# The plugin files will be available at /app/dist
+CMD ["echo", "Plugin built successfully. Files are in /app/dist"]

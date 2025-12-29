@@ -1,0 +1,21 @@
+# Grafana Datasource Provisioning
+# This file automatically configures the Parquet S3 datasource
+
+apiVersion: 1
+
+datasources:
+  - name: Parquet S3 (MinIO)
+    type: tobiasworkstech-parquet-s3-datasource
+    access: proxy
+    uid: parquet-s3-minio
+    isDefault: true
+    jsonData:
+      endpoint: http://minio:9000
+      region: us-east-1
+      accessKeyId: minioadmin
+      defaultBucket: parquet-data
+      pathStyle: true
+      insecureSkipVerify: false
+    secureJsonData:
+      secretAccessKey: minioadmin123
+    editable: true

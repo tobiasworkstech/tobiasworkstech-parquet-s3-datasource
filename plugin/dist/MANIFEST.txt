@@ -1,0 +1,39 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "private",
+  "signedByOrg": "tobiasworkstech",
+  "signedByOrgName": "tobiasworkstech",
+  "rootUrls": [
+    "http://localhost:3000/"
+  ],
+  "plugin": "tobiasworkstech-parquet-s3-datasource",
+  "version": "1.0.0",
+  "time": 1767052353099,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "gpx_parquet_s3_datasource_linux_amd64": "a9a73815f421fbe1bfb655d9ab34086dccdd038a4ee2db721b32dbe4015435ff",
+    "gpx_parquet_s3_datasource.exe_windows_amd64.exe": "cb3828d7edbcf4c77a50667adedcba2f3be208fdfe5ee197d66fb269e6fbc818",
+    "module.js.map": "02802d8c962234ef5d54928b8b0d0e6c84ca5d46359e7eaef0876863d86a1fbb",
+    "gpx_parquet_s3_datasource_darwin_amd64": "ab219f0f1fe5602a12868513d67bbd2e1ff2bcbf21a076591540a8a3fd49043a",
+    "plugin.json": "6cb93dd8611dff25324d541897db8fbd790a16caaf0781e9b210d6648578f980",
+    "README.md": "c0e2b17caf602009cb3e1d6b73c72eeaefa6c4e7fce7e76745a6f96112aee12b",
+    "img/src/img/logo.svg": "edb0d6b55c0442e32f0b9c8e51798f12d2836a453ece65b08fbfd89939622b52",
+    "gpx_parquet_s3_datasource_linux_arm64": "cda04356407cd0949a7736897c70f0459f3bb56833f006d441f9a587ab43abbe",
+    "module.js": "cab2719cdc5a4e1e9cf76efd930a9440db617694817b7e3e89c4ac0f481d53a0",
+    "gpx_parquet_s3_datasource": "45d3e9f2a2c552f53d5f664b1be2b57a162f7cdd7ea780bca1f691119ddebf4d",
+    "gpx_parquet_s3_datasource_darwin_arm64": "8bfe5915a43799ee3ca2cd07008307de2e4ec9dff85bd2dea879b3f1773887c3"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA9BAETCgBtBYJpUxRBCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnEZUh03gQDm3vXuOQ06NL2csg0yESqQWHKHG2
+bTvmK1kWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAXbACBjJSuLVsvTbg6Cka
+BGO4RzYat4P+i0Il+C2t7uGFQgiixT9/ZtTbHU0lktHXwZlZCx4RvkbK3qa2
+UeqwDLKe5nOqAgjPriuHjyqZVFWEWZoeVJF14IOxwuXk6AuuixxGpO//SH/t
+V1sTwYW1kEl2j0hlXOKZtyrh/vaif/935VDt6p2AzA==
+=YxDR
+-----END PGP SIGNATURE-----

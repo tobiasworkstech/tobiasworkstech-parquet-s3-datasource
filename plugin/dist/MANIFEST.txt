@@ -12,7 +12,7 @@ Hash: SHA512
   ],
   "plugin": "tobiasworkstech-parquet-s3-datasource",
   "version": "1.0.0",
-  "time": 1767120391414,
+  "time": 1767121554192,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "gpx_parquet_s3_datasource_linux_amd64": "234a4a7c86d71ca1e44b3086a7bfdc55bb66de0e0e706e0f1749a7f18b78d1b8",
@@ -30,11 +30,11 @@ Hash: SHA512
 }
 -----BEGIN PGP SIGNATURE-----
 
-wsA/BAETCgBtBYJpVB4HCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
-aW9ucy5vcGVucGdwanMub3Jn/ra87QRi63e7txXwqBn6cXp0VQHftYixdPxy
-RP1mxmsWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAxEUCCQFi8PiKGQhvM89X
-9Efy+0+036/2dHHuVI7IP6hkSGJHYgMviZ54iLZBX9Ju+tR5Vaxoi5Q6dMcq
-4UWf6mRyWQAvQAIJAV2Whkr64EYA7j6IfeasOOnuCJWy0LKLyMtWzj8PiVWp
-zqNmkj9jBkDoPKSUOeiqLALuQZs8IdnLyNgP/Gw6GjQz
-=vW2l
+wsA9BAETCgBtBYJpVCKSCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnWPmtQ4C6yoArlJIIiYegleqONXfQDKT2csnn
+munVj8sWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAsIUCBA27dSWGK6yulbdF
+7Rl8vC0usTsGdmUrw85PdVlIPJVvwyiteciu/NbDuNLghIONvgRW7wRCbWIx
+deLVQC2xWW/zAgYpfEpB7Fww3HNUcEoWE0Pkf2N0vaXgvigFh9jxKkNEQZFO
+/uKVUWqjijyLDPcOeD94QnR5PtSSporhdDJUq8b+rA==
+=Pr6O
 -----END PGP SIGNATURE-----

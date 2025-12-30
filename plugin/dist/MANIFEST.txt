@@ -7,12 +7,11 @@ Hash: SHA512
   "signedByOrg": "tobiasworkstech",
   "signedByOrgName": "tobiasworkstech",
   "rootUrls": [
-    "http://localhost:3000/",
-    "https://tobiasworkstech.grafana.net/"
+    "http://localhost:3000/"
   ],
   "plugin": "tobiasworkstech-parquet-s3-datasource",
   "version": "1.0.0",
-  "time": 1767122446972,
+  "time": 1767131022070,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "gpx_parquet_s3_datasource_linux_amd64": "234a4a7c86d71ca1e44b3086a7bfdc55bb66de0e0e706e0f1749a7f18b78d1b8",
@@ -30,11 +29,11 @@ Hash: SHA512
 }
 -----BEGIN PGP SIGNATURE-----
 
-wsA+BAETCgBtBYJpVCYPCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
-aW9ucy5vcGVucGdwanMub3JnaM7g7ts0gYpGvx9Mn6XuRzYYsxVjXMg9zY+z
-IUeZ9bIWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAATjACCIKaLXy57g42B36X
-Xm8TFmdNhqCvAsaID2ek1TjwQ3qsvDmKM0513eHKqGC2zNWQ0z33M7Zt7gW3
-gJFNtogxY/LKAgkB4Q8PkTr0QqpjFarY6xvImDZHg7R06i8k4txZiCV39WgD
-5MiUmRpbZYmSa+nzPz2gXsDewg0HjnPs0BmaIlei3jY=
-=wxkM
+wsA+BAETCgBtBYJpVEeOCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnVYegqojJe1OmtCGQOh4VuJSLihpdfyYLPiOX
+Ap9MySQWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAA+vwCCNLx+0QSZMC8Wmbs
+vjchepRh9Vus2f7HL81d3wpnWEcCuB5HXnpaMyZaPdasRchzdMmDvy8A8cPs
+ZJn3JVNC6kUjAgkBkZxQ+41wiQrC51Vmni91lli95Pu41bRMILq6f584bwMD
+cWMog8HXiNauzcqcTKvoH97S7144Ml8ytEASo6WlR74=
+=4ANY
 -----END PGP SIGNATURE-----

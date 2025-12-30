@@ -20,6 +20,7 @@ var Default = Build
 const (
 	pluginID   = "tobiasworkstech-parquet-s3-datasource"
 	binaryName = "gpx_parquet_s3_datasource"
+	pluginDir  = "plugin"
 )
 
 // Build builds the plugin (frontend + backend)
@@ -31,7 +32,11 @@ func Build() error {
 // BuildFrontend builds the frontend
 func BuildFrontend() error {
 	fmt.Println("Building frontend...")
-	return sh.Run("npm", "run", "build")
+	cmd := exec.Command("npm", "run", "build")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // BuildBackend builds the Go backend for multiple platforms
@@ -78,13 +83,19 @@ func buildBinary(targetOS, targetArch string) error {
 		"GOARCH":      targetArch,
 	}
 
-	ldflags := "-w -s"
-
-	return sh.RunWith(env, "go", "build",
-		"-ldflags", ldflags,
+	cmd := exec.Command("go", "build",
+		"-ldflags", "-w -s",
 		"-o", outputPath,
 		"./pkg",
 	)
+	cmd.Dir = pluginDir
+	cmd.Env = os.Environ()
+	for k, v := range env {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
+	}
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // BuildDev builds for current platform only (faster for development)
@@ -98,10 +109,14 @@ func BuildDev() error {
 
 	outputPath := filepath.Join("dist", binary)
 
-	return sh.Run("go", "build",
+	cmd := exec.Command("go", "build",
 		"-o", outputPath,
 		"./pkg",
 	)
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // Test runs all tests
@@ -113,101 +128,69 @@ func Test() error {
 
 // TestFrontend runs frontend tests
 func TestFrontend() error {
-	return sh.Run("npm", "run", "test:ci")
+	cmd := exec.Command("npm", "run", "test:ci")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // TestBackend runs Go tests
 func TestBackend() error {
-	return sh.Run("go", "test", "-v", "./...")
+	cmd := exec.Command("go", "test", "-v", "./...")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // Lint runs linters
 func Lint() error {
 	fmt.Println("Running linters...")
 
-	if err := sh.Run("npm", "run", "lint"); err != nil {
+	cmd := exec.Command("npm", "run", "lint")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 
-	return sh.Run("golangci-lint", "run", "./...")
+	cmd = exec.Command("golangci-lint", "run", "./...")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // Clean removes build artifacts
 func Clean() error {
 	fmt.Println("Cleaning...")
-
-	paths := []string{"dist", "node_modules/.cache"}
-	for _, p := range paths {
-		if err := os.RemoveAll(p); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// Package creates distributable zip files
-func Package() error {
-	mg.Deps(Build)
-
-	fmt.Println("Packaging plugin...")
-
-	// Create package directory
-	pkgDir := filepath.Join("dist", pluginID)
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		return err
-	}
-
-	// Copy dist contents
-	distFiles, err := filepath.Glob("dist/*")
-	if err != nil {
-		return err
-	}
-
-	for _, f := range distFiles {
-		base := filepath.Base(f)
-		if base == pluginID {
-			continue
-		}
-
-		dest := filepath.Join(pkgDir, base)
-		if err := copyFile(f, dest); err != nil {
-			return err
-		}
-	}
-
-	// Create zip
-	zipPath := fmt.Sprintf("dist/%s.zip", pluginID)
-	return sh.Run("zip", "-r", zipPath, pluginID, "-j", "dist/"+pluginID)
+	return sh.Rm(filepath.Join(pluginDir, "dist"))
 }
 
 // Sign signs the plugin for distribution
 func Sign() error {
 	fmt.Println("Signing plugin...")
 
-	rootURL := os.Getenv("GRAFANA_ACCESS_POLICY_TOKEN")
-	if rootURL == "" {
+	token := os.Getenv("GRAFANA_ACCESS_POLICY_TOKEN")
+	if token == "" {
 		return fmt.Errorf("GRAFANA_ACCESS_POLICY_TOKEN environment variable not set")
 	}
 
-	return sh.Run("npx", "@grafana/sign-plugin@latest")
-}
-
-func copyFile(src, dst string) error {
-	input, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(dst, input, 0644)
+	cmd := exec.Command("npx", "@grafana/sign-plugin@latest")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 // Dev runs development server with hot reload
 func Dev() error {
 	mg.Deps(BuildDev)
 
-	// Start frontend watch in background
 	cmd := exec.Command("npm", "run", "dev")
+	cmd.Dir = pluginDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -217,9 +200,17 @@ func Dev() error {
 func Install() error {
 	fmt.Println("Installing dependencies...")
 
-	if err := sh.Run("npm", "install"); err != nil {
+	cmd := exec.Command("npm", "install")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 
-	return sh.Run("go", "mod", "download")
+	cmd = exec.Command("go", "mod", "download")
+	cmd.Dir = pluginDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }

@@ -12,29 +12,29 @@ Hash: SHA512
   ],
   "plugin": "tobiasworkstech-parquet-s3-datasource",
   "version": "1.0.0",
-  "time": 1767067741717,
+  "time": 1767120391414,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "gpx_parquet_s3_datasource_linux_amd64": "a9a73815f421fbe1bfb655d9ab34086dccdd038a4ee2db721b32dbe4015435ff",
-    "gpx_parquet_s3_datasource.exe_windows_amd64.exe": "cb3828d7edbcf4c77a50667adedcba2f3be208fdfe5ee197d66fb269e6fbc818",
-    "module.js.map": "02802d8c962234ef5d54928b8b0d0e6c84ca5d46359e7eaef0876863d86a1fbb",
-    "gpx_parquet_s3_datasource_darwin_amd64": "ab219f0f1fe5602a12868513d67bbd2e1ff2bcbf21a076591540a8a3fd49043a",
-    "plugin.json": "6cb93dd8611dff25324d541897db8fbd790a16caaf0781e9b210d6648578f980",
+    "gpx_parquet_s3_datasource_linux_amd64": "234a4a7c86d71ca1e44b3086a7bfdc55bb66de0e0e706e0f1749a7f18b78d1b8",
+    "gpx_parquet_s3_datasource.exe_windows_amd64.exe": "3087745d6e36a6b1d28d99065fe6bc3b45655c7387ab79e2031e56e524500001",
+    "module.js.map": "96d0e36176a3f7bd30fb10eb69711116f15250ef227388788dbf2bad3b54e93d",
+    "gpx_parquet_s3_datasource_darwin_amd64": "742c703ba4c08ad0686456c15e7f95b53042854fa3c7e13709e2d5b2a37151b8",
+    "plugin.json": "0191924c4c90fc5aed194517df1dc83a16ead9a79fb1eeca836e1f033433d11b",
     "README.md": "c0e2b17caf602009cb3e1d6b73c72eeaefa6c4e7fce7e76745a6f96112aee12b",
-    "img/src/img/logo.svg": "edb0d6b55c0442e32f0b9c8e51798f12d2836a453ece65b08fbfd89939622b52",
-    "gpx_parquet_s3_datasource_linux_arm64": "cda04356407cd0949a7736897c70f0459f3bb56833f006d441f9a587ab43abbe",
-    "module.js": "cab2719cdc5a4e1e9cf76efd930a9440db617694817b7e3e89c4ac0f481d53a0",
-    "gpx_parquet_s3_datasource": "45d3e9f2a2c552f53d5f664b1be2b57a162f7cdd7ea780bca1f691119ddebf4d",
-    "gpx_parquet_s3_datasource_darwin_arm64": "8bfe5915a43799ee3ca2cd07008307de2e4ec9dff85bd2dea879b3f1773887c3"
+    "img/src/img/logo.svg": "241bea5b6441a91f2b2f49be13c1558fff614e57af7f88112b63f0debdf9fe98",
+    "gpx_parquet_s3_datasource_linux_arm64": "b0c2b29a7718506b7afced6fbccd058c674c88200b34f86f3f28e888bb8bdbfb",
+    "module.js": "45908b36364fa4918a4a73c13ec578fffb7e08dac1546912747772030ca89b76",
+    "gpx_parquet_s3_datasource": "b9093314db8d4411b2c0f769ea15093ed08e60604b774179364bfca7f7b6aff7",
+    "gpx_parquet_s3_datasource_darwin_arm64": "f4f5b2e0a3d06f5184445854365f4952163538fcb457be6cc0a53eee395fa74b"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 
-wsA+BAETCgBtBYJpU1BdCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
-aW9ucy5vcGVucGdwanMub3Jn0dqixUib0vixg2xHt6pNELBmbS1J4k/+2TAw
-hbKl4ngWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAzQkCCLr4TFKg6o9P2FaD
-iKpe1jTu+PrVKK3TfIe4qvG4upNwkq5cPIOVDtiBUH5wJ2OC1pOgTELqmAy3
-/UrXLGrIqAriAgkBw3DVoqf1IrywnssSTINOHvVBp/UNJhNshrHJNsEaE5Kj
-1gcT6Ffbbp+6fnLEYYUFqsXZZYhfMC55Ly9CUr8CmV0=
-=EkTo
+wsA/BAETCgBtBYJpVB4HCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3Jn/ra87QRi63e7txXwqBn6cXp0VQHftYixdPxy
+RP1mxmsWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAxEUCCQFi8PiKGQhvM89X
+9Efy+0+036/2dHHuVI7IP6hkSGJHYgMviZ54iLZBX9Ju+tR5Vaxoi5Q6dMcq
+4UWf6mRyWQAvQAIJAV2Whkr64EYA7j6IfeasOOnuCJWy0LKLyMtWzj8PiVWp
+zqNmkj9jBkDoPKSUOeiqLALuQZs8IdnLyNgP/Gw6GjQz
+=vW2l
 -----END PGP SIGNATURE-----

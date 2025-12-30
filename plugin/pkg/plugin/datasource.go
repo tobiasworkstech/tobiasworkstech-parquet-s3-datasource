@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
@@ -226,7 +228,14 @@ func (d *Datasource) readParquetFiles(ctx context.Context, bucket string, files 
 			toTime,
 		)
 		if err != nil {
-			log.DefaultLogger.Warn("Failed to read file", "file", file, "error", err)
+			// Silently skip files that don't exist (404/NoSuchKey) - this can happen
+			// if files are deleted between listing and reading
+			if strings.Contains(err.Error(), "NoSuchKey") || strings.Contains(err.Error(), "404") {
+				log.DefaultLogger.Debug("Skipping non-existent file", "file", file)
+				continue
+			}
+			// Log other errors at debug level to avoid spamming the UI
+			log.DefaultLogger.Debug("Failed to read parquet file", "file", file, "error", err)
 			continue
 		}
 		allFrames = append(allFrames, frame)
@@ -510,12 +519,41 @@ func (d *Datasource) handleSchema(ctx context.Context, req *backend.CallResource
 		})
 	}
 
+	// Validate key is not empty
+	if schemaReq.Key == "" {
+		// Return empty schema for empty key - don't error
+		body, _ := json.Marshal(parquetReader.ParquetSchema{Columns: []parquetReader.ParquetColumn{}})
+		return sender.Send(&backend.CallResourceResponse{
+			Status: http.StatusOK,
+			Body:   body,
+		})
+	}
+
 	// Get object
 	result, err := d.s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(schemaReq.Bucket),
 		Key:    aws.String(schemaReq.Key),
 	})
 	if err != nil {
+		// Check if it's a NoSuchKey error - return empty schema instead of error
+		var noSuchKey *types.NoSuchKey
+		if errors.As(err, &noSuchKey) {
+			log.DefaultLogger.Debug("File not found for schema", "bucket", schemaReq.Bucket, "key", schemaReq.Key)
+			body, _ := json.Marshal(parquetReader.ParquetSchema{Columns: []parquetReader.ParquetColumn{}})
+			return sender.Send(&backend.CallResourceResponse{
+				Status: http.StatusOK,
+				Body:   body,
+			})
+		}
+		// For other errors, check if it's a "not found" type error from the response
+		if strings.Contains(err.Error(), "NoSuchKey") || strings.Contains(err.Error(), "404") {
+			log.DefaultLogger.Debug("File not found for schema", "bucket", schemaReq.Bucket, "key", schemaReq.Key, "error", err)
+			body, _ := json.Marshal(parquetReader.ParquetSchema{Columns: []parquetReader.ParquetColumn{}})
+			return sender.Send(&backend.CallResourceResponse{
+				Status: http.StatusOK,
+				Body:   body,
+			})
+		}
 		return sender.Send(&backend.CallResourceResponse{
 			Status: http.StatusInternalServerError,
 			Body:   []byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())),
@@ -524,7 +562,7 @@ func (d *Datasource) handleSchema(ctx context.Context, req *backend.CallResource
 	defer result.Body.Close()
 
 	// Read schema
-	data, err := io.ReadAll(result.Body)
+	fileData, err := io.ReadAll(result.Body)
 	if err != nil {
 		return sender.Send(&backend.CallResourceResponse{
 			Status: http.StatusInternalServerError,
@@ -532,7 +570,7 @@ func (d *Datasource) handleSchema(ctx context.Context, req *backend.CallResource
 		})
 	}
 
-	schema, err := parquetReader.GetSchema(data)
+	schema, err := parquetReader.GetSchema(fileData)
 	if err != nil {
 		return sender.Send(&backend.CallResourceResponse{
 			Status: http.StatusInternalServerError,

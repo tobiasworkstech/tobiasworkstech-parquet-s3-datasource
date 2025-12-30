@@ -136,9 +136,7 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 	if qm.FilePattern == "" {
 		qm.FilePattern = "*.parquet"
 	}
-	if qm.TimeColumn == "" {
-		qm.TimeColumn = "timestamp"
-	}
+	// TimeColumn can be empty for non-time-series data
 
 	// List matching files
 	files, err := d.listMatchingFiles(ctx, bucket, qm.PathPrefix, qm.FilePattern)
@@ -153,8 +151,17 @@ func (d *Datasource) query(ctx context.Context, pCtx backend.PluginContext, quer
 		return response
 	}
 
+	// Determine time range - use zero time if not specified
+	var fromTime, toTime time.Time
+	if qm.TimeRange.From > 0 {
+		fromTime = time.UnixMilli(qm.TimeRange.From)
+	}
+	if qm.TimeRange.To > 0 {
+		toTime = time.UnixMilli(qm.TimeRange.To)
+	}
+
 	// Read and combine parquet files
-	frame, err := d.readParquetFiles(ctx, bucket, files, qm)
+	frame, err := d.readParquetFiles(ctx, bucket, files, qm, fromTime, toTime)
 	if err != nil {
 		return backend.ErrDataResponse(backend.StatusInternal, fmt.Sprintf("failed to read parquet files: %v", err))
 	}
@@ -202,7 +209,7 @@ func (d *Datasource) listMatchingFiles(ctx context.Context, bucket, prefix, patt
 	return files, nil
 }
 
-func (d *Datasource) readParquetFiles(ctx context.Context, bucket string, files []string, qm QueryModel) (*data.Frame, error) {
+func (d *Datasource) readParquetFiles(ctx context.Context, bucket string, files []string, qm QueryModel, fromTime, toTime time.Time) (*data.Frame, error) {
 	var allFrames []*data.Frame
 
 	for _, file := range files {
@@ -215,8 +222,8 @@ func (d *Datasource) readParquetFiles(ctx context.Context, bucket string, files 
 			qm.Columns,
 			qm.QueryText,
 			qm.MaxRows,
-			time.UnixMilli(qm.TimeRange.From),
-			time.UnixMilli(qm.TimeRange.To),
+			fromTime,
+			toTime,
 		)
 		if err != nil {
 			log.DefaultLogger.Warn("Failed to read file", "file", file, "error", err)
@@ -305,6 +312,8 @@ func (d *Datasource) CallResource(ctx context.Context, req *backend.CallResource
 		return d.handleFiles(ctx, req, sender)
 	case "schema":
 		return d.handleSchema(ctx, req, sender)
+	case "query":
+		return d.handleQuery(ctx, req, sender)
 	default:
 		return sender.Send(&backend.CallResourceResponse{
 			Status: http.StatusNotFound,
@@ -355,7 +364,8 @@ func (d *Datasource) handleFiles(ctx context.Context, req *backend.CallResourceR
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(filesReq.Bucket),
 	}
-	if filesReq.Prefix != "" {
+	// Only set prefix if it's not empty and not a wildcard pattern
+	if filesReq.Prefix != "" && filesReq.Prefix != "*" && !strings.Contains(filesReq.Prefix, "*") {
 		input.Prefix = aws.String(filesReq.Prefix)
 	}
 
@@ -384,6 +394,111 @@ func (d *Datasource) handleFiles(ctx context.Context, req *backend.CallResourceR
 		Status: http.StatusOK,
 		Body:   body,
 	})
+}
+
+func (d *Datasource) handleQuery(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
+	var qm QueryModel
+	if err := json.Unmarshal(req.Body, &qm); err != nil {
+		return sender.Send(&backend.CallResourceResponse{
+			Status: http.StatusBadRequest,
+			Body:   []byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())),
+		})
+	}
+
+	// Create a backend query from the request
+	queryJSON, _ := json.Marshal(qm)
+	backendQuery := backend.DataQuery{
+		RefID: qm.RefID,
+		JSON:  queryJSON,
+	}
+
+	// Execute the query
+	response := d.query(ctx, backend.PluginContext{}, backendQuery)
+
+	// Convert frames to JSON response
+	if response.Error != nil {
+		return sender.Send(&backend.CallResourceResponse{
+			Status: http.StatusInternalServerError,
+			Body:   []byte(fmt.Sprintf(`{"error": "%s"}`, response.Error.Error())),
+		})
+	}
+
+	// Build response with frames data
+	framesData := make([]map[string]interface{}, 0, len(response.Frames))
+	for _, frame := range response.Frames {
+		frameData := map[string]interface{}{
+			"schema": map[string]interface{}{
+				"name":   frame.Name,
+				"refId":  frame.RefID,
+				"fields": make([]map[string]interface{}, 0, len(frame.Fields)),
+			},
+			"data": map[string]interface{}{
+				"values": make([]interface{}, 0, len(frame.Fields)),
+			},
+		}
+
+		fields := frameData["schema"].(map[string]interface{})["fields"].([]map[string]interface{})
+		values := frameData["data"].(map[string]interface{})["values"].([]interface{})
+
+		for _, field := range frame.Fields {
+			// Map Go field types to Grafana field type names
+			// Mark time column as "time" type
+			fieldType := mapFieldTypeToGrafana(field.Type())
+			if field.Name == qm.TimeColumn {
+				fieldType = "time"
+			}
+			fields = append(fields, map[string]interface{}{
+				"name": field.Name,
+				"type": fieldType,
+			})
+
+			// Extract field values - convert nanoseconds to milliseconds for time fields
+			fieldValues := make([]interface{}, field.Len())
+			for i := 0; i < field.Len(); i++ {
+				val := field.At(i)
+				// Convert nanoseconds to milliseconds for time column
+				if field.Name == qm.TimeColumn {
+					if intVal, ok := val.(int64); ok {
+						// Convert nanoseconds to milliseconds
+						fieldValues[i] = intVal / 1000000
+					} else {
+						fieldValues[i] = val
+					}
+				} else {
+					fieldValues[i] = val
+				}
+			}
+			values = append(values, fieldValues)
+		}
+
+		frameData["schema"].(map[string]interface{})["fields"] = fields
+		frameData["data"].(map[string]interface{})["values"] = values
+		framesData = append(framesData, frameData)
+	}
+
+	body, _ := json.Marshal(map[string]interface{}{"frames": framesData})
+	return sender.Send(&backend.CallResourceResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	})
+}
+
+// mapFieldTypeToGrafana maps Go data field types to Grafana field type names
+func mapFieldTypeToGrafana(fieldType data.FieldType) string {
+	switch fieldType {
+	case data.FieldTypeTime:
+		return "time"
+	case data.FieldTypeInt8, data.FieldTypeInt16, data.FieldTypeInt32, data.FieldTypeInt64,
+		data.FieldTypeUint8, data.FieldTypeUint16, data.FieldTypeUint32, data.FieldTypeUint64,
+		data.FieldTypeFloat32, data.FieldTypeFloat64:
+		return "number"
+	case data.FieldTypeBool:
+		return "boolean"
+	case data.FieldTypeString:
+		return "string"
+	default:
+		return "other"
+	}
 }
 
 func (d *Datasource) handleSchema(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {

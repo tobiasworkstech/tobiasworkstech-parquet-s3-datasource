@@ -19,13 +19,18 @@ import {
 } from '../types';
 
 export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourceOptions> {
-  url?: string;
   defaultBucket?: string;
 
   constructor(instanceSettings: DataSourceInstanceSettings<ParquetS3DataSourceOptions>) {
     super(instanceSettings);
-    this.url = instanceSettings.url;
     this.defaultBucket = instanceSettings.jsonData.defaultBucket;
+  }
+
+  /**
+   * Get the base URL for backend resource API calls
+   */
+  private getResourceUrl(path: string): string {
+    return `/api/datasources/uid/${this.uid}/resources${path}`;
   }
 
   /**
@@ -62,7 +67,7 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
       try {
         const response = await lastValueFrom(
           getBackendSrv().fetch<any>({
-            url: `${this.url}/query`,
+            url: this.getResourceUrl('/query'),
             method: 'POST',
             data: {
               ...query,
@@ -75,38 +80,29 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
           }) as unknown as Observable<FetchResponse<any>>
         );
 
-        const frame = new MutableDataFrame({
-          refId: target.refId,
-          fields: [],
-        });
+        console.log('Backend response:', JSON.stringify(response.data, null, 2));
 
         if (response.data?.frames?.[0]) {
           const backendFrame = response.data.frames[0];
-          
-          // Add fields from backend response
-          if (backendFrame.schema?.fields) {
-            for (const field of backendFrame.schema.fields) {
-              const fieldType = this.mapFieldType(field.type);
-              frame.addField({
-                name: field.name,
-                type: fieldType,
-                values: [],
-              });
-            }
-          }
 
-          // Add data values
-          if (backendFrame.data?.values) {
-            for (let i = 0; i < backendFrame.data.values.length; i++) {
-              const values = backendFrame.data.values[i];
-              if (frame.fields[i]) {
-                frame.fields[i].values = values;
-              }
-            }
-          }
+          // Build fields array with values
+          const fields = (backendFrame.schema?.fields || []).map((field: any, i: number) => ({
+            name: field.name,
+            type: this.mapFieldType(field.type),
+            values: backendFrame.data?.values?.[i] || [],
+          }));
+
+          console.log('Constructing frame with fields:', fields.map((f: any) => ({ name: f.name, valuesLength: f.values?.length })));
+
+          const frame = new MutableDataFrame({
+            refId: target.refId,
+            fields: fields,
+          });
+
+          return frame;
         }
 
-        return frame;
+        return new MutableDataFrame({ refId: target.refId, fields: [] });
       } catch (error: any) {
         console.error('Query error:', error);
         throw new Error(`Query failed: ${error.message || 'Unknown error'}`);
@@ -169,7 +165,7 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
   async getSchema(bucket: string, key: string): Promise<ParquetSchema> {
     const response = await lastValueFrom(
       getBackendSrv().fetch<ParquetSchema>({
-        url: `${this.url}/schema`,
+        url: this.getResourceUrl('/schema'),
         method: 'POST',
         data: { bucket, key },
       }) as unknown as Observable<FetchResponse<ParquetSchema>>
@@ -183,7 +179,7 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
   async listFiles(bucket: string, prefix?: string): Promise<S3FileListResponse> {
     const response = await lastValueFrom(
       getBackendSrv().fetch<S3FileListResponse>({
-        url: `${this.url}/files`,
+        url: this.getResourceUrl('/files'),
         method: 'POST',
         data: { bucket, prefix },
       }) as unknown as Observable<FetchResponse<S3FileListResponse>>
@@ -197,7 +193,7 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
   async listBuckets(): Promise<string[]> {
     const response = await lastValueFrom(
       getBackendSrv().fetch<{ buckets: string[] }>({
-        url: `${this.url}/buckets`,
+        url: this.getResourceUrl('/buckets'),
         method: 'GET',
       }) as unknown as Observable<FetchResponse<{ buckets: string[] }>>
     );

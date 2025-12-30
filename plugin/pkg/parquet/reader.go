@@ -335,12 +335,14 @@ func toTime(val interface{}) time.Time {
 	case time.Time:
 		return v
 	case int64:
-		// Assume milliseconds
-		return time.UnixMilli(v)
+		// Parquet stores timestamps as nanoseconds
+		return time.Unix(0, v)
 	case int32:
-		return time.UnixMilli(int64(v))
+		// Smaller values might be seconds or days
+		return time.Unix(int64(v), 0)
 	case float64:
-		return time.UnixMilli(int64(v))
+		// Assume nanoseconds
+		return time.Unix(0, int64(v))
 	default:
 		return time.Time{}
 	}

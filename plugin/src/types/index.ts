@@ -28,7 +28,7 @@ export const defaultQuery: Partial<ParquetS3Query> = {
   pathPrefix: '',
   filePattern: '*.parquet',
   queryText: '',
-  timeColumn: 'timestamp',
+  timeColumn: '',
   columns: [],
   maxRows: 10000,
 };

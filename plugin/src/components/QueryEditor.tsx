@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { InlineField, Input, Select, MultiSelect, TextArea, InlineFieldRow } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from '../datasource/datasource';
@@ -9,10 +9,8 @@ type Props = QueryEditorProps<DataSource, ParquetS3Query, ParquetS3DataSourceOpt
 export function QueryEditor(props: Props) {
   const { datasource, query, onChange, onRunQuery } = props;
   const [buckets, setBuckets] = useState<SelectableValue[]>([]);
-  const [files, setFiles] = useState<SelectableValue[]>([]);
   const [columns, setColumns] = useState<ParquetColumn[]>([]);
   const [loadingBuckets, setLoadingBuckets] = useState(false);
-  const [loadingFiles, setLoadingFiles] = useState(false);
   const [loadingColumns, setLoadingColumns] = useState(false);
 
   // Load buckets on mount
@@ -31,49 +29,36 @@ export function QueryEditor(props: Props) {
     loadBuckets();
   }, [datasource]);
 
-  // Load files when bucket or prefix changes
+  // Auto-load schema when bucket changes
   useEffect(() => {
-    const loadFiles = async () => {
+    const autoLoadSchema = async () => {
       if (!query.bucket) {
-        setFiles([]);
+        setColumns([]);
         return;
       }
-      setLoadingFiles(true);
-      try {
-        const result = await datasource.listFiles(query.bucket, query.pathPrefix);
-        setFiles(
-          result.files
-            .filter((f) => f.key.endsWith('.parquet'))
-            .map((f) => ({ label: f.key, value: f.key }))
-        );
-      } catch (error) {
-        console.error('Failed to load files:', error);
-      } finally {
-        setLoadingFiles(false);
-      }
-    };
-    loadFiles();
-  }, [datasource, query.bucket, query.pathPrefix]);
-
-  // Load schema when a file is selected
-  const loadSchema = useCallback(
-    async (bucket: string, key: string) => {
       setLoadingColumns(true);
       try {
-        const schema = await datasource.getSchema(bucket, key);
-        setColumns(schema.columns);
+        // Get list of files and load schema from the first parquet file
+        const result = await datasource.listFiles(query.bucket, query.pathPrefix);
+        const parquetFiles = result.files.filter((f) => f.key.endsWith('.parquet'));
+        if (parquetFiles.length > 0) {
+          const schema = await datasource.getSchema(query.bucket, parquetFiles[0].key);
+          setColumns(schema.columns);
+        } else {
+          setColumns([]);
+        }
       } catch (error) {
-        console.error('Failed to load schema:', error);
+        console.error('Failed to auto-load schema:', error);
         setColumns([]);
       } finally {
         setLoadingColumns(false);
       }
-    },
-    [datasource]
-  );
+    };
+    autoLoadSchema();
+  }, [datasource, query.bucket, query.pathPrefix]);
 
-  const onBucketChange = (value: SelectableValue<string>) => {
-    onChange({ ...query, bucket: value.value || '' });
+  const onBucketChange = (value: SelectableValue<string> | null) => {
+    onChange({ ...query, bucket: value?.value || '' });
   };
 
   const onPathPrefixChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -88,8 +73,8 @@ export function QueryEditor(props: Props) {
     onChange({ ...query, queryText: event.target.value });
   };
 
-  const onTimeColumnChange = (value: SelectableValue<string>) => {
-    onChange({ ...query, timeColumn: value.value || '' });
+  const onTimeColumnChange = (value: SelectableValue<string> | null) => {
+    onChange({ ...query, timeColumn: value?.value || '' });
     onRunQuery();
   };
 
@@ -103,12 +88,6 @@ export function QueryEditor(props: Props) {
     onChange({ ...query, maxRows: isNaN(value) ? defaultQuery.maxRows : value });
   };
 
-  const onFileSelect = (value: SelectableValue<string>) => {
-    if (value.value && query.bucket) {
-      loadSchema(query.bucket, value.value);
-    }
-  };
-
   const columnOptions = columns.map((c) => ({
     label: `${c.name} (${c.type})`,
     value: c.name,
@@ -117,9 +96,9 @@ export function QueryEditor(props: Props) {
   return (
     <>
       <InlineFieldRow>
-        <InlineField label="Bucket" labelWidth={14} tooltip="S3 bucket containing Parquet files">
+        <InlineField label="Bucket" labelWidth={12} tooltip="S3 bucket containing Parquet files">
           <Select
-            width={30}
+            width={25}
             options={buckets}
             value={query.bucket ? { label: query.bucket, value: query.bucket } : null}
             onChange={onBucketChange}
@@ -129,19 +108,19 @@ export function QueryEditor(props: Props) {
           />
         </InlineField>
 
-        <InlineField label="Path Prefix" labelWidth={14} tooltip="Filter files by path prefix">
+        <InlineField label="Path Prefix" labelWidth={12} tooltip="Filter files by path prefix (optional, leave empty for root)">
           <Input
-            width={30}
+            width={20}
             value={query.pathPrefix || ''}
             onChange={onPathPrefixChange}
             onBlur={onRunQuery}
-            placeholder="data/2024/"
+            placeholder="(root)"
           />
         </InlineField>
 
-        <InlineField label="File Pattern" labelWidth={14} tooltip="File pattern to match (supports wildcards)">
+        <InlineField label="File Pattern" labelWidth={12} tooltip="File pattern to match">
           <Input
-            width={20}
+            width={15}
             value={query.filePattern || defaultQuery.filePattern}
             onChange={onFilePatternChange}
             onBlur={onRunQuery}
@@ -152,34 +131,17 @@ export function QueryEditor(props: Props) {
 
       <InlineFieldRow>
         <InlineField
-          label="Load Schema From"
-          labelWidth={14}
-          tooltip="Select a file to load column schema"
-        >
-          <Select
-            width={40}
-            options={files}
-            onChange={onFileSelect}
-            isLoading={loadingFiles}
-            placeholder="Select file to load schema..."
-            isClearable
-          />
-        </InlineField>
-      </InlineFieldRow>
-
-      <InlineFieldRow>
-        <InlineField
           label="Time Column"
-          labelWidth={14}
-          tooltip="Column to use as time field for time series data"
+          labelWidth={12}
+          tooltip="Column to use as time field for time series (leave empty for non-time-series data)"
         >
           <Select
-            width={30}
+            width={25}
             options={columnOptions}
             value={query.timeColumn ? { label: query.timeColumn, value: query.timeColumn } : null}
             onChange={onTimeColumnChange}
             isLoading={loadingColumns}
-            placeholder="Select time column..."
+            placeholder="(none)"
             isClearable
             allowCustomValue
           />
@@ -187,29 +149,23 @@ export function QueryEditor(props: Props) {
 
         <InlineField
           label="Columns"
-          labelWidth={14}
+          labelWidth={12}
           tooltip="Columns to include (leave empty for all)"
         >
           <MultiSelect
-            width={50}
+            width={40}
             options={columnOptions}
             value={(query.columns || []).map((c) => ({ label: c, value: c }))}
             onChange={onColumnsChange}
             isLoading={loadingColumns}
-            placeholder="Select columns..."
+            placeholder="All columns"
             allowCustomValue
           />
         </InlineField>
-      </InlineFieldRow>
 
-      <InlineFieldRow>
-        <InlineField
-          label="Max Rows"
-          labelWidth={14}
-          tooltip="Maximum number of rows to return"
-        >
+        <InlineField label="Max Rows" labelWidth={10} tooltip="Maximum rows to return">
           <Input
-            width={15}
+            width={10}
             type="number"
             value={query.maxRows ?? defaultQuery.maxRows}
             onChange={onMaxRowsChange}
@@ -220,17 +176,17 @@ export function QueryEditor(props: Props) {
 
       <InlineFieldRow>
         <InlineField
-          label="SQL Filter"
-          labelWidth={14}
-          tooltip="SQL-like WHERE clause to filter data (e.g., 'value > 100 AND status = active')"
+          label="Filter"
+          labelWidth={12}
+          tooltip="Filter condition (optional)"
           grow
         >
           <TextArea
             value={query.queryText || ''}
             onChange={onQueryTextChange}
             onBlur={onRunQuery}
-            placeholder="value > 100 AND status = 'active'"
-            rows={2}
+            placeholder="(none)"
+            rows={1}
           />
         </InlineField>
       </InlineFieldRow>

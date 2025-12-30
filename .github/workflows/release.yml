@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ inputs.version }}"
+          if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+            echo "Error: Invalid version format. Use semver (e.g., 1.0.0 or 1.0.0-beta.1)"
+            exit 1
+          fi
+
+      - name: Update version in plugin.json
+        run: |
+          VERSION="${{ inputs.version }}"
+          cd plugin
+          jq --arg v "$VERSION" '.info.version = $v' src/plugin.json > tmp.json
+          mv tmp.json src/plugin.json
+          echo "Updated plugin.json version to $VERSION"
+
+      - name: Update version in package.json
+        run: |
+          VERSION="${{ inputs.version }}"
+          cd plugin
+          jq --arg v "$VERSION" '.version = $v' package.json > tmp.json
+          mv tmp.json package.json
+          echo "Updated package.json version to $VERSION"
+
+      - name: Commit version changes
+        run: |
+          VERSION="${{ inputs.version }}"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add plugin/src/plugin.json plugin/package.json
+          git commit -m "chore: bump version to $VERSION" || echo "No changes to commit"
+          git push
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ inputs.version }}"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          echo "Created and pushed tag v$VERSION"
+
+      - name: Trigger CI/CD workflow
+        run: |
+          echo "Tag pushed. CI/CD workflow will be triggered automatically."
+          echo "Monitor progress at: ${{ github.server_url }}/${{ github.repository }}/actions"

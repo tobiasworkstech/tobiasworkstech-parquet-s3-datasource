@@ -1,0 +1,165 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          go mod download
+
+      - name: Lint frontend
+        run: npm run lint
+
+      - name: Lint backend
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m
+
+      - name: Test frontend
+        run: npm run test:ci
+
+      - name: Test backend
+        run: go test -v ./...
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build backend
+        run: |
+          # Build for multiple platforms
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_linux_amd64 ./pkg
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_linux_arm64 ./pkg
+          GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_darwin_amd64 ./pkg
+          GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_darwin_arm64 ./pkg
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_windows_amd64.exe ./pkg
+
+      - name: Check plugin.json
+        run: |
+          if [ ! -f "dist/plugin.json" ]; then
+            echo "Error: plugin.json not found in dist/"
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-dist
+          path: dist/
+          retention-days: 7
+
+  sign-and-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-dist
+          path: dist/
+
+      - name: Sign plugin
+        env:
+          GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+        run: |
+          npx @grafana/sign-plugin@latest
+
+      - name: Verify signature
+        run: |
+          if [ ! -f "dist/MANIFEST.txt" ]; then
+            echo "Error: Plugin signing failed - MANIFEST.txt not found"
+            exit 1
+          fi
+          echo "Plugin signed successfully"
+          cat dist/MANIFEST.txt
+
+      - name: Package plugin
+        run: |
+          PLUGIN_ID="tobiasworkstech-parquet-s3-datasource"
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          
+          # Create plugin directory
+          mkdir -p "${PLUGIN_ID}"
+          cp -r dist/* "${PLUGIN_ID}/"
+          
+          # Create zip archive
+          zip -r "${PLUGIN_ID}-${VERSION}.zip" "${PLUGIN_ID}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            tobiasworkstech-parquet-s3-datasource-*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Submit to Grafana Plugin Catalog
+  submit-to-catalog:
+    needs: sign-and-release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Notify about catalog submission
+        run: |
+          echo "============================================"
+          echo "Plugin has been built, signed, and released!"
+          echo "============================================"
+          echo ""
+          echo "To submit to the Grafana Plugin Catalog:"
+          echo ""
+          echo "1. Go to https://grafana.com/auth/sign-in/"
+          echo "2. Navigate to My Account > My Plugins"
+          echo "3. Click 'Submit Plugin'"
+          echo "4. Enter your repository URL: ${{ github.server_url }}/${{ github.repository }}"
+          echo "5. Follow the submission wizard"
+          echo ""
+          echo "For automated submission via API (requires Publisher account):"
+          echo "POST https://grafana.com/api/plugins"
+          echo ""
+          echo "See: https://grafana.com/developers/plugin-tools/publish-a-plugin/publish-a-plugin"

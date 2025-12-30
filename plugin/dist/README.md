@@ -96,6 +96,8 @@ files(my-bucket, data/)
 ### Building
 
 ```bash
+cd plugin
+
 # Install dependencies
 npm install
 go mod download
@@ -104,10 +106,14 @@ go mod download
 npm run build
 
 # Build backend (all platforms)
-mage buildBackend
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_linux_amd64 ./pkg
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_linux_arm64 ./pkg
+GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_darwin_amd64 ./pkg
+GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_darwin_arm64 ./pkg
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_windows_amd64.exe ./pkg
 
-# Or build for current platform only
-mage buildDev
+# Or build for current platform only (faster for development)
+go build -o dist/gpx_parquet_s3_datasource ./pkg
 ```
 
 ### Running locally
@@ -124,6 +130,8 @@ npm run dev
 ### Testing
 
 ```bash
+cd plugin
+
 # Frontend tests
 npm run test:ci
 
@@ -132,7 +140,7 @@ go test -v ./...
 
 # Lint
 npm run lint
-go run github.com/golangci/golangci-lint/cmd/golangci-lint run
+golangci-lint run ./...
 ```
 
 ## Docker Deployment

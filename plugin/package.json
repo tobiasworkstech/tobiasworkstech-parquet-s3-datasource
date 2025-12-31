@@ -1,6 +1,6 @@
 {
   "name": "tobiasworkstech-parquet-s3-datasource",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Grafana datasource plugin for reading Parquet files from S3-compatible storage",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",

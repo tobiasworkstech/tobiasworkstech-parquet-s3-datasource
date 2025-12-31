@@ -166,53 +166,27 @@ Access:
 
 ## Publishing
 
-### Signing the Plugin
+### Automated Release (Recommended)
 
-1. Create a Grafana Cloud account
-2. Generate an access policy token with `plugins:write` scope
-3. Set the environment variable:
-   ```bash
-   export GRAFANA_ACCESS_POLICY_TOKEN=your-token
-   ```
-4. Sign the plugin:
+1. **One-time setup**: Add `GRAFANA_ACCESS_POLICY_TOKEN` to your GitHub repository secrets
+2. **Release**:
    ```bash
    cd plugin
-   npx @grafana/sign-plugin@latest
+   npm version patch   # or 'minor' or 'major'
+   git push origin main --tags
    ```
 
-### Packaging the Plugin
+GitHub Actions will automatically build, sign, package, and create a release.
 
-**Important**: The zip must contain a folder named exactly as your plugin ID.
+### Manual Release
 
-```bash
-cd plugin
+See [PUBLISHING.md](PUBLISHING.md) for detailed manual instructions.
 
-# Rename dist to plugin ID
-mv dist tobiasworkstech-parquet-s3-datasource
+### Submit to Grafana Plugin Catalog
 
-# Create the zip (zip the folder, not contents)
-zip -r tobiasworkstech-parquet-s3-datasource-1.0.0.zip tobiasworkstech-parquet-s3-datasource
-
-# Rename back for continued development
-mv tobiasworkstech-parquet-s3-datasource dist
-```
-
-The resulting zip structure should be:
-```
-tobiasworkstech-parquet-s3-datasource-1.0.0.zip
-└── tobiasworkstech-parquet-s3-datasource/
-    ├── plugin.json
-    ├── module.js
-    ├── gpx_parquet_s3_datasource_linux_amd64
-    ├── gpx_parquet_s3_datasource_linux_arm64
-    └── ...
-```
-
-### Submitting to Grafana Plugin Catalog
-
-1. Ensure your plugin meets the [publishing requirements](https://grafana.com/developers/plugin-tools/publish-a-plugin/publishing-best-practices)
-2. Create a release on GitHub with the signed plugin
-3. Submit via the [Grafana Plugin Submission](https://grafana.com/auth/sign-in/) portal
+1. Go to https://grafana.com/auth/sign-in/
+2. Navigate to **My Account** → **My Plugins** → **Submit Plugin**
+3. Enter your GitHub repository URL and follow the wizard
 
 ## CI/CD
 

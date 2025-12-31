@@ -100,6 +100,18 @@ async def main():
         await page.screenshot(path="screenshot_explore_full.png", full_page=True)
         print("Saved: screenshot_explore_full.png")
 
+        # Screenshot 5: Sample Dashboard
+        print("Capturing Sample Dashboard...")
+        await page.goto("http://localhost:3000/d/parquet-s3-sample/parquet-s3-sample-dashboard?orgId=1&from=now-7d&to=now&timezone=browser&refresh=30s")
+        await page.wait_for_load_state("networkidle")
+        await asyncio.sleep(5)  # Wait for panels to load data
+        await page.screenshot(path="screenshot_dashboard.png", full_page=False)
+        print("Saved: screenshot_dashboard.png")
+
+        # Screenshot 6: Dashboard full page
+        await page.screenshot(path="screenshot_dashboard_full.png", full_page=True)
+        print("Saved: screenshot_dashboard_full.png")
+
         await browser.close()
         print("\nAll screenshots captured successfully!")
 

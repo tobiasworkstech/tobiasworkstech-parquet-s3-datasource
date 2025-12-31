@@ -25,6 +25,9 @@ tobiasworkstech-parquet-s3-datasource/
 ├── docker/                     # Docker development environment
 │   ├── docker-compose.yml      # Grafana + MinIO setup
 │   └── provisioning/           # Auto-provisioned datasources
+├── .github/workflows/          # GitHub Actions
+│   ├── ci-cd.yml               # Build, sign, release on tag push
+│   └── release.yml             # Manual version bump workflow
 ├── screenshots.py              # Playwright screenshot generator
 └── PUBLISHING.md               # Plugin publishing guide
 ```
@@ -106,11 +109,10 @@ docker exec grafana cat /var/log/grafana/grafana.log
 ## Grafana Plugin Rules
 
 When modifying Go code, avoid:
-- Direct filesystem access with `os` package in plugin code (use only in build tools)
+- Direct filesystem access with `os` package in plugin code
+- Accessing environment variables with `os.Getenv` in plugin code
 - Hardcoded credentials
 - `console.log` in production frontend code
-
-The `magefile.go` is intentionally in the repo root (not `plugin/`) to avoid Grafana's code validator flagging build tool code.
 
 ## Testing the Plugin
 
@@ -120,11 +122,22 @@ The `magefile.go` is intentionally in the repo root (not `plugin/`) to avoid Gra
 4. Select bucket "parquet-data", time column "timestamp"
 5. Run query to see sample data
 
-## Publishing
+## Publishing (Automated)
 
-See `PUBLISHING.md` for complete publishing instructions. Quick steps:
-1. Build: `cd plugin && npm run build && go build...`
-2. Sign: `npx @grafana/sign-plugin@latest`
-3. Package: `cd dist && zip -r ../plugin-1.0.0.zip .`
-4. Create GitHub release with zip file
-5. Submit to Grafana plugin catalog
+GitHub Actions handles everything automatically:
+
+```bash
+cd plugin
+npm version patch   # bumps version and creates tag
+git push origin main --tags
+```
+
+**Required**: Add `GRAFANA_ACCESS_POLICY_TOKEN` secret to your GitHub repository.
+
+The workflow will:
+1. Build frontend + backend (all platforms)
+2. Sign the plugin
+3. Package correctly (zip with plugin ID folder)
+4. Create GitHub Release
+
+See `PUBLISHING.md` for manual instructions.

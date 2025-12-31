@@ -401,12 +401,12 @@ func evaluateCondition(row map[string]interface{}, cond string) bool {
 		}
 	case int64, int32, int:
 		var numVal int64
-		fmt.Sscanf(value, "%d", &numVal)
+		_, _ = fmt.Sscanf(value, "%d", &numVal)
 		rowNum := reflect.ValueOf(v).Int()
 		return compareInt(rowNum, numVal, op)
 	case float64, float32:
 		var numVal float64
-		fmt.Sscanf(value, "%f", &numVal)
+		_, _ = fmt.Sscanf(value, "%f", &numVal)
 		rowNum := reflect.ValueOf(v).Float()
 		return compareFloat(rowNum, numVal, op)
 	}

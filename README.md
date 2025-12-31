@@ -168,15 +168,20 @@ Access:
 
 ### Automated Release (Recommended)
 
-1. **One-time setup**: Add `GRAFANA_ACCESS_POLICY_TOKEN` to your GitHub repository secrets
-2. **Release**:
-   ```bash
-   cd plugin
-   npm version patch   # or 'minor' or 'major'
-   git push origin main --tags
-   ```
+The CI/CD workflow runs in two modes:
+- **Push to `main`**: Runs build, lint, and tests only
+- **Push version tag (`v*`)**: Runs full release (build, sign, package, create GitHub release)
 
-GitHub Actions will automatically build, sign, package, and create a release.
+**One-time setup**: Add `GRAFANA_ACCESS_POLICY_TOKEN` to your GitHub repository secrets
+
+**To release**:
+```bash
+cd plugin
+npm version patch   # or 'minor' or 'major' - creates commit + tag
+git push origin main --tags   # push both commit and tag
+```
+
+GitHub Actions will automatically build, sign, package, and create a release when the tag is pushed.
 
 ### Manual Release
 

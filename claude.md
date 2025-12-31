@@ -124,20 +124,25 @@ When modifying Go code, avoid:
 
 ## Publishing (Automated)
 
-GitHub Actions handles everything automatically:
+GitHub Actions handles everything automatically. The workflow has two modes:
+
+**On push to `main`**: Only runs build + lint + test (CI)
+**On push of version tag (`v*`)**: Runs full release pipeline (build, sign, package, release)
+
+### To Release a New Version
 
 ```bash
 cd plugin
-npm version patch   # bumps version and creates tag
-git push origin main --tags
+npm version patch   # bumps version, commits, and creates tag
+git push origin main --tags   # push commit AND tag to trigger release
 ```
 
 **Required**: Add `GRAFANA_ACCESS_POLICY_TOKEN` secret to your GitHub repository.
 
-The workflow will:
+The release workflow will:
 1. Build frontend + backend (all platforms)
-2. Sign the plugin
+2. Sign the plugin with Grafana token
 3. Package correctly (zip with plugin ID folder)
-4. Create GitHub Release
+4. Create GitHub Release with zip attached
 
 See `PUBLISHING.md` for manual instructions.

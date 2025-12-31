@@ -26,19 +26,33 @@ The easiest way to release is using GitHub Actions automation:
    - Create secret: `GRAFANA_ACCESS_POLICY_TOKEN`
    - Paste your token
 
+### How the CI/CD Works
+
+The workflow runs in **two modes**:
+- **Push to `main` branch**: Only runs build, lint, and tests (CI)
+- **Push version tag (`v*`)**: Runs full release pipeline (build, sign, package, release)
+
 ### Release a New Version
 
 ```bash
 cd plugin
 
-# Bump version (updates package.json and creates git tag)
+# Bump version (updates package.json, commits, AND creates git tag)
 npm version patch   # or 'minor' or 'major'
 
-# Push changes and tag to trigger workflow
+# Push BOTH the commit and the tag to trigger release
 git push origin main --tags
 ```
 
-The GitHub Actions workflow will automatically:
+Or manually create a tag:
+```bash
+git tag v1.0.2
+git push origin v1.0.2
+```
+
+**Important**: The release pipeline only triggers on version tags (`v*`). Regular pushes to `main` only run CI checks (build/lint/test).
+
+The release workflow will automatically:
 1. ✅ Build frontend and backend for all platforms
 2. ✅ Sign the plugin with your Grafana token
 3. ✅ Package correctly (with proper folder structure)

@@ -85,20 +85,36 @@ npx @grafana/sign-plugin@latest
 cat dist/MANIFEST.txt
 ```
 
-### Automated Signing (GitHub Actions)
+### Automated Signing (GitHub Actions) - RECOMMENDED
+
+This is the easiest way to release your plugin. GitHub Actions will automatically build, sign, package, and create a release.
+
+**One-time setup:**
 
 1. Add your token as a repository secret:
    - Go to your repository → **Settings** → **Secrets and variables** → **Actions**
    - Create a new secret named `GRAFANA_ACCESS_POLICY_TOKEN`
    - Paste your token
 
-2. Push a version tag:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
+**To release a new version:**
 
-3. The CI/CD workflow will automatically build, sign, and create a release
+```bash
+# Option 1: Using npm to bump version and push tag
+cd plugin
+npm version patch   # or 'minor' or 'major'
+git push origin main --tags
+
+# Option 2: Manual tag
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+The CI/CD workflow will automatically:
+1. Build frontend and backend for all platforms
+2. Sign the plugin with your Grafana token
+3. Package it correctly (with proper folder structure)
+4. Create a GitHub Release with the zip attached
+5. Generate release notes from commits
 
 ## Step 4: Package the Plugin
 

@@ -54,6 +54,7 @@ const config = async (env: { production?: boolean }): Promise<Configuration> => 
         patterns: [
           { from: 'src/plugin.json', to: '.' },
           { from: '../README.md', to: '.', noErrorOnMissing: true },
+          { from: 'CHANGELOG.md', to: '.', noErrorOnMissing: true },
           { from: 'src/img/', to: 'img/', noErrorOnMissing: true },
         ],
       }),

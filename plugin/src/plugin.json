@@ -30,14 +30,27 @@
     "links": [
       {
         "name": "GitHub",
-        "url": "https://github.com/tobiasworkstech/grafana-parquet-s3-datasource"
+        "url": "https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource"
       },
       {
         "name": "Documentation",
-        "url": "https://github.com/tobiasworkstech/grafana-parquet-s3-datasource/blob/main/README.md"
+        "url": "https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/blob/main/README.md"
       }
     ],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Datasource Configuration",
+        "path": "img/screenshot_datasource_config.png"
+      },
+      {
+        "name": "Query Editor in Explore",
+        "path": "img/screenshot_explore_view.png"
+      },
+      {
+        "name": "Sample Dashboard",
+        "path": "img/screenshot_dashboard.png"
+      }
+    ],
     "version": "1.0.0",
     "updated": "2025-01-01"
   },

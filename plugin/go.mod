@@ -1,4 +1,4 @@
-module github.com/tobiasworkstech/grafana-parquet-s3-datasource
+module github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource
 
 go 1.21
 
@@ -7,7 +7,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.12
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.47.5
 	github.com/grafana/grafana-plugin-sdk-go v0.199.0
-	github.com/magefile/mage v1.15.0
 	github.com/parquet-go/parquet-go v0.23.0
 )
 
@@ -56,6 +55,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
+	github.com/magefile/mage v1.15.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattetti/filebuffer v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

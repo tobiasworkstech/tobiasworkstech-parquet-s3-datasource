@@ -169,15 +169,44 @@ Access:
 ### Signing the Plugin
 
 1. Create a Grafana Cloud account
-2. Generate an access policy token
+2. Generate an access policy token with `plugins:write` scope
 3. Set the environment variable:
    ```bash
    export GRAFANA_ACCESS_POLICY_TOKEN=your-token
    ```
 4. Sign the plugin:
    ```bash
+   cd plugin
    npx @grafana/sign-plugin@latest
    ```
+
+### Packaging the Plugin
+
+**Important**: The zip must contain a folder named exactly as your plugin ID.
+
+```bash
+cd plugin
+
+# Rename dist to plugin ID
+mv dist tobiasworkstech-parquet-s3-datasource
+
+# Create the zip (zip the folder, not contents)
+zip -r tobiasworkstech-parquet-s3-datasource-1.0.0.zip tobiasworkstech-parquet-s3-datasource
+
+# Rename back for continued development
+mv tobiasworkstech-parquet-s3-datasource dist
+```
+
+The resulting zip structure should be:
+```
+tobiasworkstech-parquet-s3-datasource-1.0.0.zip
+└── tobiasworkstech-parquet-s3-datasource/
+    ├── plugin.json
+    ├── module.js
+    ├── gpx_parquet_s3_datasource_linux_amd64
+    ├── gpx_parquet_s3_datasource_linux_arm64
+    └── ...
+```
 
 ### Submitting to Grafana Plugin Catalog
 

@@ -100,20 +100,65 @@ cat dist/MANIFEST.txt
 
 3. The CI/CD workflow will automatically build, sign, and create a release
 
-## Step 4: Create GitHub Release
+## Step 4: Package the Plugin
 
-### Manual Release
+**Important**: The zip must contain a folder named exactly as your plugin ID, not loose files.
 
-1. Create a zip of your plugin:
-   ```bash
-   cd dist
-   zip -r ../tobiasworkstech-parquet-s3-datasource-1.0.0.zip .
-   ```
+### Correct Packaging
 
-2. Go to your GitHub repository → **Releases** → **Create a new release**
-3. Choose your tag (e.g., `v1.0.0`)
-4. Upload the zip file
-5. Publish the release
+```bash
+cd plugin
+
+# Rename dist folder to plugin ID
+mv dist tobiasworkstech-parquet-s3-datasource
+
+# Create the zip (zip the FOLDER, not contents)
+zip -r tobiasworkstech-parquet-s3-datasource-1.0.0.zip tobiasworkstech-parquet-s3-datasource
+
+# Rename back for continued development
+mv tobiasworkstech-parquet-s3-datasource dist
+```
+
+### Verify Zip Structure
+
+The zip should have this structure:
+```
+tobiasworkstech-parquet-s3-datasource-1.0.0.zip
+└── tobiasworkstech-parquet-s3-datasource/    <-- folder with plugin ID
+    ├── plugin.json
+    ├── module.js
+    ├── module.js.map
+    ├── MANIFEST.txt
+    ├── img/
+    │   └── logo.svg
+    ├── gpx_parquet_s3_datasource_linux_amd64
+    ├── gpx_parquet_s3_datasource_linux_arm64
+    ├── gpx_parquet_s3_datasource_darwin_amd64
+    ├── gpx_parquet_s3_datasource_darwin_arm64
+    └── gpx_parquet_s3_datasource_windows_amd64.exe
+```
+
+**Wrong** (don't do this):
+```bash
+cd dist
+zip -r ../plugin.zip .   # ❌ This zips contents without parent folder
+```
+
+### Verify Before Uploading
+
+```bash
+# List zip contents to verify structure
+unzip -l tobiasworkstech-parquet-s3-datasource-1.0.0.zip
+```
+
+You should see all files prefixed with `tobiasworkstech-parquet-s3-datasource/`.
+
+## Step 5: Create GitHub Release
+
+1. Go to your GitHub repository → **Releases** → **Create a new release**
+2. Choose your tag (e.g., `v1.0.0`)
+3. Upload the correctly packaged zip file
+4. Publish the release
 
 ### Automated Release
 

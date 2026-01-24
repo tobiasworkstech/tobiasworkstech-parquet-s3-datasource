@@ -80,8 +80,6 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
           }) as unknown as Observable<FetchResponse<any>>
         );
 
-        console.log('Backend response:', JSON.stringify(response.data, null, 2));
-
         if (response.data?.frames?.[0]) {
           const backendFrame = response.data.frames[0];
 
@@ -91,8 +89,6 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
             type: this.mapFieldType(field.type),
             values: backendFrame.data?.values?.[i] || [],
           }));
-
-          console.log('Constructing frame with fields:', fields.map((f: any) => ({ name: f.name, valuesLength: f.values?.length })));
 
           const frame = new MutableDataFrame({
             refId: target.refId,
@@ -104,7 +100,6 @@ export class DataSource extends DataSourceApi<ParquetS3Query, ParquetS3DataSourc
 
         return new MutableDataFrame({ refId: target.refId, fields: [] });
       } catch (error: any) {
-        console.error('Query error:', error);
         throw new Error(`Query failed: ${error.message || 'Unknown error'}`);
       }
     });

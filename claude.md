@@ -7,7 +7,7 @@ This is a **Grafana datasource plugin** that reads Parquet files from S3-compati
 ## Project Structure
 
 ```
-tobiasworkstech-parquet-s3-datasource/
+tobiasworkstech-parquets3-datasource/
 ├── plugin/                     # Main plugin code
 │   ├── src/                    # Frontend (React/TypeScript)
 │   │   ├── components/         # React components (QueryEditor, ConfigEditor)
@@ -75,7 +75,7 @@ Access points:
 
 ## Plugin ID
 
-`tobiasworkstech-parquet-s3-datasource`
+`tobiasworkstech-parquets3-datasource`
 
 ## Build Targets
 

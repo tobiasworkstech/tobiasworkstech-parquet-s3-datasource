@@ -1,4 +1,4 @@
-module github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource
+module github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
 
 go 1.23.5
 

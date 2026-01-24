@@ -22,10 +22,10 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 
 ### Manual Installation
 
-1. Download the latest release from [GitHub Releases](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases)
 2. Extract to your Grafana plugins directory:
    ```bash
-   unzip tobiasworkstech-parquet-s3-datasource-*.zip -d /var/lib/grafana/plugins/
+   unzip tobiasworkstech-parquets3-datasource-*.zip -d /var/lib/grafana/plugins/
    ```
 3. Restart Grafana
 
@@ -34,8 +34,8 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 ```bash
 docker run -d \
   -p 3000:3000 \
-  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquet-s3-datasource \
-  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquet-s3-datasource \
+  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquets3-datasource \
+  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquets3-datasource \
   grafana/grafana:latest
 ```
 
@@ -185,7 +185,7 @@ GitHub Actions will automatically build, sign, package, and create a release whe
 
 ### Manual Release
 
-See [PUBLISHING.md](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/blob/main/PUBLISHING.md) for detailed manual instructions.
+See [PUBLISHING.md](https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/blob/main/PUBLISHING.md) for detailed manual instructions.
 
 ### Submit to Grafana Plugin Catalog
 
@@ -221,5 +221,5 @@ Apache License 2.0
 
 ## Support
 
-- [GitHub Issues](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/issues)
+- [GitHub Issues](https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/issues)
 - [Grafana Community](https://community.grafana.com/)

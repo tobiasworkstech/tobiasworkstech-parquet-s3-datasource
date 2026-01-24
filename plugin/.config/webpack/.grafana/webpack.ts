@@ -5,7 +5,7 @@ import ESLintPlugin from 'eslint-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import path from 'path';
 
-const PLUGIN_ID = 'tobiasworkstech-parquet-s3-datasource';
+const PLUGIN_ID = 'tobiasworkstech-parquets3-datasource';
 
 const config = async (env: { production?: boolean }): Promise<Configuration> => {
   const isProduction = env.production === true;

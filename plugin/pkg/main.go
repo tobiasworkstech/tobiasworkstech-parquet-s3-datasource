@@ -6,11 +6,11 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 
-	"github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/pkg/plugin"
+	"github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/pkg/plugin"
 )
 
 func main() {
-	if err := datasource.Manage("tobiasworkstech-parquet-s3-datasource", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("tobiasworkstech-parquets3-datasource", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}

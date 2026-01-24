@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
   "name": "Parquet S3",
-  "id": "tobiasworkstech-parquets3-datasource",
+  "id": "tobiasworkstech-parquet-s3-datasource",
   "metrics": true,
   "backend": true,
   "executable": "gpx_parquet_s3_datasource",
@@ -51,7 +51,7 @@
         "path": "img/screenshot_dashboard.png"
       }
     ],
-    "version": "1.0.5",
+    "version": "1.0.6",
     "updated": "2026-01-24"
   },
   "includes": [],

@@ -25,7 +25,7 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 1. Download the latest release from [GitHub Releases](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/releases)
 2. Extract to your Grafana plugins directory:
    ```bash
-   unzip tobiasworkstech-parquets3-datasource-*.zip -d /var/lib/grafana/plugins/
+   unzip tobiasworkstech-parquet-s3-datasource-*.zip -d /var/lib/grafana/plugins/
    ```
 3. Restart Grafana
 
@@ -34,8 +34,8 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 ```bash
 docker run -d \
   -p 3000:3000 \
-  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquets3-datasource \
-  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquets3-datasource \
+  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquet-s3-datasource \
+  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquet-s3-datasource \
   grafana/grafana:latest
 ```
 

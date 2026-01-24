@@ -22,10 +22,10 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 
 ### Manual Installation
 
-1. Download the latest release from [GitHub Releases](https://github.com/tobiasworkstech/grafana-parquet-s3-datasource/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/releases)
 2. Extract to your Grafana plugins directory:
    ```bash
-   unzip tobiasworkstech-parquet-s3-datasource-*.zip -d /var/lib/grafana/plugins/
+   unzip tobiasworkstech-parquets3-datasource-*.zip -d /var/lib/grafana/plugins/
    ```
 3. Restart Grafana
 
@@ -34,8 +34,8 @@ A Grafana datasource plugin for reading Apache Parquet files stored in S3-compat
 ```bash
 docker run -d \
   -p 3000:3000 \
-  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquet-s3-datasource \
-  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquet-s3-datasource \
+  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=tobiasworkstech-parquets3-datasource \
+  -v /path/to/plugin:/var/lib/grafana/plugins/tobiasworkstech-parquets3-datasource \
   grafana/grafana:latest
 ```
 
@@ -166,24 +166,32 @@ Access:
 
 ## Publishing
 
-### Signing the Plugin
+### Automated Release (Recommended)
 
-1. Create a Grafana Cloud account
-2. Generate an access policy token
-3. Set the environment variable:
-   ```bash
-   export GRAFANA_ACCESS_POLICY_TOKEN=your-token
-   ```
-4. Sign the plugin:
-   ```bash
-   npx @grafana/sign-plugin@latest
-   ```
+The CI/CD workflow runs in two modes:
+- **Push to `main`**: Runs build, lint, and tests only
+- **Push version tag (`v*`)**: Runs full release (build, sign, package, create GitHub release)
 
-### Submitting to Grafana Plugin Catalog
+**One-time setup**: Add `GRAFANA_ACCESS_POLICY_TOKEN` to your GitHub repository secrets
 
-1. Ensure your plugin meets the [publishing requirements](https://grafana.com/developers/plugin-tools/publish-a-plugin/publishing-best-practices)
-2. Create a release on GitHub with the signed plugin
-3. Submit via the [Grafana Plugin Submission](https://grafana.com/auth/sign-in/) portal
+**To release**:
+```bash
+cd plugin
+npm version patch   # or 'minor' or 'major' - creates commit + tag
+git push origin main --tags   # push both commit and tag
+```
+
+GitHub Actions will automatically build, sign, package, and create a release when the tag is pushed.
+
+### Manual Release
+
+See [PUBLISHING.md](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/blob/main/PUBLISHING.md) for detailed manual instructions.
+
+### Submit to Grafana Plugin Catalog
+
+1. Go to https://grafana.com/auth/sign-in/
+2. Navigate to **My Account** → **My Plugins** → **Submit Plugin**
+3. Enter your GitHub repository URL and follow the wizard
 
 ## CI/CD
 
@@ -213,5 +221,5 @@ Apache License 2.0
 
 ## Support
 
-- [GitHub Issues](https://github.com/tobiasworkstech/grafana-parquet-s3-datasource/issues)
+- [GitHub Issues](https://github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/issues)
 - [Grafana Community](https://community.grafana.com/)

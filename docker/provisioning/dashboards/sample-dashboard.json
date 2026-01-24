@@ -23,7 +23,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "tobiasworkstech-parquets3-datasource",
+        "type": "tobiasworkstech-parquet-s3-datasource",
         "uid": "parquet-s3-minio"
       },
       "fieldConfig": {
@@ -113,7 +113,7 @@
             "location"
           ],
           "datasource": {
-            "type": "tobiasworkstech-parquets3-datasource",
+            "type": "tobiasworkstech-parquet-s3-datasource",
             "uid": "parquet-s3-minio"
           },
           "filePattern": "*.parquet",
@@ -129,7 +129,7 @@
     },
     {
       "datasource": {
-        "type": "tobiasworkstech-parquets3-datasource",
+        "type": "tobiasworkstech-parquet-s3-datasource",
         "uid": "parquet-s3-minio"
       },
       "fieldConfig": {
@@ -219,7 +219,7 @@
             "location"
           ],
           "datasource": {
-            "type": "tobiasworkstech-parquets3-datasource",
+            "type": "tobiasworkstech-parquet-s3-datasource",
             "uid": "parquet-s3-minio"
           },
           "filePattern": "*.parquet",
@@ -235,7 +235,7 @@
     },
     {
       "datasource": {
-        "type": "tobiasworkstech-parquets3-datasource",
+        "type": "tobiasworkstech-parquet-s3-datasource",
         "uid": "parquet-s3-minio"
       },
       "fieldConfig": {
@@ -295,7 +295,7 @@
             "temperature"
           ],
           "datasource": {
-            "type": "tobiasworkstech-parquets3-datasource",
+            "type": "tobiasworkstech-parquet-s3-datasource",
             "uid": "parquet-s3-minio"
           },
           "filePattern": "*.parquet",
@@ -311,7 +311,7 @@
     },
     {
       "datasource": {
-        "type": "tobiasworkstech-parquets3-datasource",
+        "type": "tobiasworkstech-parquet-s3-datasource",
         "uid": "parquet-s3-minio"
       },
       "fieldConfig": {
@@ -371,7 +371,7 @@
             "humidity"
           ],
           "datasource": {
-            "type": "tobiasworkstech-parquets3-datasource",
+            "type": "tobiasworkstech-parquet-s3-datasource",
             "uid": "parquet-s3-minio"
           },
           "filePattern": "*.parquet",
@@ -387,7 +387,7 @@
     },
     {
       "datasource": {
-        "type": "tobiasworkstech-parquets3-datasource",
+        "type": "tobiasworkstech-parquet-s3-datasource",
         "uid": "parquet-s3-minio"
       },
       "fieldConfig": {
@@ -470,7 +470,7 @@
           "bucket": "parquet-data",
           "columns": [],
           "datasource": {
-            "type": "tobiasworkstech-parquets3-datasource",
+            "type": "tobiasworkstech-parquet-s3-datasource",
             "uid": "parquet-s3-minio"
           },
           "filePattern": "*.parquet",

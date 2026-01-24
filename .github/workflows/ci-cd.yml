@@ -136,7 +136,7 @@ jobs:
       - name: Package plugin
         working-directory: plugin
         run: |
-          PLUGIN_ID="tobiasworkstech-parquets3-datasource"
+          PLUGIN_ID="tobiasworkstech-parquet-s3-datasource"
           VERSION="${GITHUB_REF#refs/tags/v}"
 
           # Rename dist to plugin ID (correct packaging format)
@@ -157,13 +157,13 @@ jobs:
       - name: Generate build provenance attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: plugin/tobiasworkstech-parquets3-datasource-*.zip
+          subject-path: plugin/tobiasworkstech-parquet-s3-datasource-*.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            plugin/tobiasworkstech-parquets3-datasource-*.zip
+            plugin/tobiasworkstech-parquet-s3-datasource-*.zip
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}

@@ -106,21 +106,26 @@ jobs:
           path: plugin/dist/
 
       - name: Sign plugin
+        id: sign
         working-directory: plugin
+        continue-on-error: true
         env:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
         run: |
           npx --yes @grafana/sign-plugin@latest
 
-      - name: Verify signature
+      - name: Check signature status
         working-directory: plugin
         run: |
-          if [ ! -f "dist/MANIFEST.txt" ]; then
-            echo "Error: Plugin signing failed - MANIFEST.txt not found"
-            exit 1
+          if [ -f "dist/MANIFEST.txt" ]; then
+            echo "✅ Plugin signed successfully"
+            cat dist/MANIFEST.txt
+            echo "SIGNED=true" >> $GITHUB_ENV
+          else
+            echo "⚠️ Plugin signing skipped or failed"
+            echo "This is expected for initial submission before Grafana approval"
+            echo "SIGNED=false" >> $GITHUB_ENV
           fi
-          echo "Plugin signed successfully"
-          cat dist/MANIFEST.txt
 
       - name: Copy LICENSE and go.mod to dist
         working-directory: plugin
@@ -162,6 +167,13 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+          body: |
+            ${{ env.SIGNED == 'true' && '✅ **Signed plugin** - Ready for production use' || '⚠️ **Unsigned plugin** - For Grafana catalog submission/review only' }}
+
+            ## Installation
+            Download the zip file and extract to your Grafana plugins directory.
+
+            ${{ env.SIGNED != 'true' && '> Note: This release is unsigned. After Grafana approves the plugin, future releases will be signed.' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

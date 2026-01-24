@@ -1,5 +1,5 @@
 {
-  "name": "tobiasworkstech-parquet-s3-datasource",
+  "name": "tobiasworkstech-parquets3-datasource",
   "version": "1.0.3",
   "description": "Grafana datasource plugin for reading Parquet files from S3-compatible storage",
   "scripts": {

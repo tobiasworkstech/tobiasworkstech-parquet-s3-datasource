@@ -13,6 +13,7 @@ on:
 permissions:
   contents: write
   id-token: write
+  attestations: write
 
 jobs:
   build:
@@ -34,7 +35,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.23'
           cache-dependency-path: plugin/go.sum
 
       - name: Install dependencies
@@ -109,7 +110,7 @@ jobs:
         env:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
         run: |
-          npx --yes @grafana/sign-plugin@latest --rootUrls https://tobiasworkstech.grafana.net/  
+          npx --yes @grafana/sign-plugin@latest
 
       - name: Verify signature
         working-directory: plugin
@@ -121,10 +122,16 @@ jobs:
           echo "Plugin signed successfully"
           cat dist/MANIFEST.txt
 
+      - name: Copy LICENSE and go.mod to dist
+        working-directory: plugin
+        run: |
+          cp ../LICENSE dist/
+          cp go.mod dist/
+
       - name: Package plugin
         working-directory: plugin
         run: |
-          PLUGIN_ID="tobiasworkstech-parquet-s3-datasource"
+          PLUGIN_ID="tobiasworkstech-parquets3-datasource"
           VERSION="${GITHUB_REF#refs/tags/v}"
 
           # Rename dist to plugin ID (correct packaging format)
@@ -137,11 +144,21 @@ jobs:
           echo "Verifying zip structure:"
           unzip -l "${PLUGIN_ID}-${VERSION}.zip" | head -20
 
+          # Calculate SHA1 checksum
+          echo ""
+          echo "SHA1 Checksum:"
+          shasum -a 1 "${PLUGIN_ID}-${VERSION}.zip"
+
+      - name: Generate build provenance attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: plugin/tobiasworkstech-parquets3-datasource-*.zip
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            plugin/tobiasworkstech-parquet-s3-datasource-*.zip
+            plugin/tobiasworkstech-parquets3-datasource-*.zip
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}

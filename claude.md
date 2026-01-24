@@ -75,7 +75,7 @@ Access points:
 
 ## Plugin ID
 
-`tobiasworkstech-parquet-s3-datasource`
+`tobiasworkstech-parquets3-datasource`
 
 ## Build Targets
 

@@ -20,8 +20,8 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 
-	parquetS3 "github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/pkg/s3"
-	parquetReader "github.com/tobiasworkstech/tobiasworkstech-parquet-s3-datasource/pkg/parquet"
+	parquetS3 "github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/pkg/s3"
+	parquetReader "github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/pkg/parquet"
 )
 
 // Datasource is the main plugin datasource struct

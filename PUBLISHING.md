@@ -109,24 +109,24 @@ cat dist/MANIFEST.txt
 cd plugin
 
 # Rename dist folder to plugin ID
-mv dist tobiasworkstech-parquet-s3-datasource
+mv dist tobiasworkstech-parquets3-datasource
 
 # Create the zip (zip the FOLDER, not contents)
-zip -r tobiasworkstech-parquet-s3-datasource-1.0.0.zip tobiasworkstech-parquet-s3-datasource
+zip -r tobiasworkstech-parquets3-datasource-1.0.0.zip tobiasworkstech-parquets3-datasource
 
 # Rename back for continued development
-mv tobiasworkstech-parquet-s3-datasource dist
+mv tobiasworkstech-parquets3-datasource dist
 ```
 
 **Verify the structure:**
 ```bash
-unzip -l tobiasworkstech-parquet-s3-datasource-1.0.0.zip
+unzip -l tobiasworkstech-parquets3-datasource-1.0.0.zip
 ```
 
 Expected output - all files prefixed with the plugin ID folder:
 ```
-tobiasworkstech-parquet-s3-datasource-1.0.0.zip
-└── tobiasworkstech-parquet-s3-datasource/
+tobiasworkstech-parquets3-datasource-1.0.0.zip
+└── tobiasworkstech-parquets3-datasource/
     ├── plugin.json
     ├── module.js
     ├── MANIFEST.txt
@@ -208,7 +208,7 @@ cat dist/plugin.json | jq .
 # Verify zip contents
 unzip -l your-plugin.zip
 
-# All files should be prefixed with: tobiasworkstech-parquet-s3-datasource/
+# All files should be prefixed with: tobiasworkstech-parquets3-datasource/
 ```
 
 ### Plugin Not Loading

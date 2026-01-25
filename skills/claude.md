@@ -1,50 +1,34 @@
 # Release Information
 
-## Latest Release: v1.0.12
+## Latest Release: v1.0.15
 
 **Release Date:** 2026-01-25
 
-**Download:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/tag/v1.0.12
+**Download:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/tag/v1.0.15
 
 ### Checksums
 
-**File:** `tobiasworkstech-parquets3-datasource-1.0.12.zip`
+**File:** `tobiasworkstech-parquets3-datasource-1.0.15.zip`
 
 | Algorithm | Checksum |
 |-----------|----------|
-| MD5 | `e8224b892556772078983b4cf8ca8653` |
-| SHA1 | `bbbf08b0b12bd3c3c6ce80d209e3867a499f19ed` |
-| SHA256 | `11169acd3e5b72ad607db3d22adaa7d2957662e4fd7b25ff0a7a270272574ca6` |
+| MD5 | `179c4f119a378f74f370b90d92f16912` |
+| SHA1 | `9e02ccfadc0da40e14f56d943efe27c42af916e5` |
+| SHA256 | `e05bb4a5d559ccaf62157756488c53bb9a6f963a9a879e3710210a768f920dce` |
 
-### Changes in v1.0.12
+### Changes in v1.0.15
 
+- Add screenshot PNG files to git repository (were in .gitignore)
 - Set executable permissions (0755) on all binary files
 - Copy README.md to dist folder
-- Fix webpack README.md path
-- Update plugin version to 1.0.12
+- All Grafana validation errors fixed
 
-Fixes Grafana validation errors:
-- binary-executable-permissions errors
-- missing-readme error
-- path-not-exists errors for screenshots
+### Package Contents
 
----
-
-## Previous Release: v1.0.11
-
-**File:** `tobiasworkstech-parquets3-datasource-1.0.11.zip`
-
-| Algorithm | Checksum |
-|-----------|----------|
-| MD5 | `490721da62bccb5b6e171d41483f4e21` |
-| SHA1 | `315f18d41feda0dbe7e6d94d8b3c94c9c72ec405` |
-| SHA256 | `95d11c510b1ac17bc3760c182c799c7e10a09a473085a75c64fabcd0127bba01` |
-
-### Changes in v1.0.11
-
-- Fixed golangci-lint errors:
-  - Check error return values for `Body.Close()` and `rows.Close()`
-  - Lifted `maxRows` condition into loop condition (staticcheck QF1006)
+- Binary executables (linux/darwin/windows, amd64/arm64)
+- README.md
+- plugin.json
+- Screenshots in img/
 
 ---
 

@@ -29,33 +29,51 @@
 - README.md
 - plugin.json
 - Screenshots in img/
+- go.mod
 
 ---
 
 ## Grafana Validation Status
 
 **Submitted:** 2026-01-25
-**Status:** ⚠️ Warnings only (can be reviewed)
 
-### Validation Results
+### Current Errors (Need to fix submission URL)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| no-go-manifest | ❌ ERROR | Grafana can't find go.mod - need correct ref |
+| js-map-no-match | ❌ ERROR | Source maps don't match - Grafana checking wrong ref |
+| unsigned-plugin | ⚠️ Expected | Will be signed after Grafana approves |
+
+### Root Cause
+
+**Grafana is checking the wrong git ref!** The source code at `main` branch has commits after v1.0.15, causing the mismatch.
+
+### Solution: Provide Source Code URL with Tag Reference
+
+When submitting to Grafana, use **one of these URL formats**:
+
+**Option 1 - Tree URL:**
+```
+https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
+```
+
+**Option 2 - Archive URL (source zip):**
+```
+https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/archive/refs/tags/v1.0.15.zip
+```
+
+**Option 3 - If there's a separate ref field:**
+- Repository: `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource`
+- Ref/Tag: `v1.0.15`
+
+### Previously Fixed Issues
 
 | Item | Status | Notes |
 |------|--------|-------|
 | binary-executable-permissions | ✅ FIXED | All binaries have 0755 |
 | missing-readme | ✅ FIXED | README.md included |
 | screenshots | ✅ FIXED | All PNGs included |
-| unsigned-plugin | ⚠️ Expected | Will be signed after Grafana approves |
-| source-code-not-provided | ⚠️ Check URL | Ensure correct repo URL was entered |
-| sponsorshiplink | 💡 Optional | Just a suggestion |
-
-### Notes
-
-- **unsigned-plugin** warning is expected for new plugins - Grafana will sign it after approval
-- For source-code warning, ensure the exact repository URL was entered:
-  ```
-  https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
-  ```
-  No trailing slashes, no `.git` extension, no branch/tag references.
 
 ---
 
@@ -65,11 +83,16 @@
 
 **Repository:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
 
+**Source Code (with tag):** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
+
 To submit/update on Grafana Plugin Catalog:
 1. Go to https://grafana.com/auth/sign-in/
 2. Navigate to My Account > My Plugins
 3. Click 'Submit Plugin' or 'Update Submission'
-4. Enter repository URL: https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
+4. **IMPORTANT:** Use the source code URL with the tag reference:
+   ```
+   https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
+   ```
 5. Follow the submission wizard
 
 ---

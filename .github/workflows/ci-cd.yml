@@ -44,11 +44,14 @@ jobs:
         run: npm run lint
 
       - name: Lint backend
+        # Upgrade to v6 of the official action
         uses: golangci/golangci-lint-action@v6
         with:
+          # Explicitly request v2.x to support Go 1.25+
           version: v2.4
-          args: --timeout=5m
-
+          # Optional: Disable cache if you keep getting 'Cache service 400' errors
+          skip-cache: false            
+          
       - name: Test frontend
         run: npm run test:ci
         continue-on-error: true

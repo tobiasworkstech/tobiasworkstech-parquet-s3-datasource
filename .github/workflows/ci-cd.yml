@@ -115,6 +115,20 @@ jobs:
           name: plugin-dist
           path: dist/
 
+      - name: Set executable permissions
+        run: |
+          # GitHub Actions artifact upload/download doesn't preserve permissions
+          # Set executable permissions (0755) required by Grafana
+          chmod 755 dist/gpx_parquet_s3_datasource_linux_amd64
+          chmod 755 dist/gpx_parquet_s3_datasource_linux_arm64
+          chmod 755 dist/gpx_parquet_s3_datasource_darwin_amd64
+          chmod 755 dist/gpx_parquet_s3_datasource_darwin_arm64
+          chmod 755 dist/gpx_parquet_s3_datasource_windows_amd64.exe
+
+          # Verify permissions
+          echo "Binary permissions:"
+          ls -la dist/gpx_parquet_s3_datasource_*
+
       - name: Sign plugin
         id: sign
         continue-on-error: true

@@ -50,7 +50,9 @@ jobs:
           # Explicitly request v2.x to support Go 1.25+
           version: v2.4
           # Optional: Disable cache if you keep getting 'Cache service 400' errors
-          skip-cache: false            
+          skip-cache: false
+          # Ensure it uses the right output format for v2
+          args: --out-format=colored-line-number          
           
       - name: Test frontend
         run: npm run test:ci

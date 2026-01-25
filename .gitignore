@@ -17,5 +17,6 @@ coverage/
 dist/
 node_modules/
 node_modules/# Dependencies
-screenshot*.png
+# Allow src/img screenshots (don't ignore them)
+# screenshot*.png
 venv/

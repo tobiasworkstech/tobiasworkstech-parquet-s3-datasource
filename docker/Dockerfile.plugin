@@ -6,15 +6,15 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 
 # Copy package files
-COPY plugin/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm ci
 
 # Copy frontend source
-COPY plugin/src ./src
-COPY plugin/tsconfig.json ./
-COPY plugin/.config ./.config
+COPY src ./src
+COPY tsconfig.json ./
+COPY .config ./.config
 
 # Build frontend
 RUN npm run build
@@ -28,13 +28,13 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy go module files
-COPY plugin/go.mod plugin/go.sum ./
+COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download
 
 # Copy backend source
-COPY plugin/pkg ./pkg
+COPY pkg ./pkg
 
 # Build for Linux amd64 (most common deployment target)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \

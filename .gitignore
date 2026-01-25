@@ -1,4 +1,21 @@
-venv/
-screenshot*.png
+
+# Build output
+# Cache
+# IDE
+# OS
+# Test
+*.log
+*.swo
+*.swp
+.DS_Store
+.eslintcache
+.idea/
+.vscode/
+Thumbs.db
 __pycache__/
+coverage/
+dist/
 node_modules/
+node_modules/# Dependencies
+screenshot*.png
+venv/

@@ -72,6 +72,16 @@ jobs:
           GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_darwin_arm64 ./pkg
           GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o dist/gpx_parquet_s3_datasource_windows_amd64.exe ./pkg
 
+          # Set executable permissions (required by Grafana)
+          chmod 755 dist/gpx_parquet_s3_datasource_linux_amd64
+          chmod 755 dist/gpx_parquet_s3_datasource_linux_arm64
+          chmod 755 dist/gpx_parquet_s3_datasource_darwin_amd64
+          chmod 755 dist/gpx_parquet_s3_datasource_darwin_arm64
+          chmod 755 dist/gpx_parquet_s3_datasource_windows_amd64.exe
+
+      - name: Copy README to dist
+        run: cp README.md dist/
+
       - name: Check plugin.json
         run: |
           if [ ! -f "dist/plugin.json" ]; then

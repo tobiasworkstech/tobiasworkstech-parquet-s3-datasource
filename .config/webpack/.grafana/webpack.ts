@@ -53,7 +53,7 @@ const config = async (env: { production?: boolean }): Promise<Configuration> => 
       new CopyWebpackPlugin({
         patterns: [
           { from: 'src/plugin.json', to: '.' },
-          { from: '../README.md', to: '.', noErrorOnMissing: true },
+          { from: 'README.md', to: '.', noErrorOnMissing: true },
           { from: 'CHANGELOG.md', to: '.', noErrorOnMissing: true },
           { from: 'src/img/', to: 'img/', noErrorOnMissing: true },
         ],

@@ -51,8 +51,7 @@ jobs:
           version: v2.6
           # Optional: Disable cache if you keep getting 'Cache service 400' errors
           skip-cache: false
-          # Ensure it uses the right output format for v2
-          args: --out-format=colored-line-number          
+      
           
       - name: Test frontend
         run: npm run test:ci

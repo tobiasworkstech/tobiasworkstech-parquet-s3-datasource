@@ -33,67 +33,54 @@
 
 ---
 
+## Grafana Plugin Submission Form Values
+
+**Use these exact values when submitting/updating on Grafana:**
+
+| Field | Value |
+|-------|-------|
+| **Plugin URL (zip file)** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/download/v1.0.15/tobiasworkstech-parquets3-datasource-1.0.15.zip` |
+| **MD5 or SHA1** | `179c4f119a378f74f370b90d92f16912` |
+| **Source code URL** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15` |
+| **Testing guidance** | `Use docker-compose in /docker folder to spin up Grafana + MinIO with sample data. See README for details.` |
+| **Provisioning provided** | Yes |
+
+### Important Notes
+
+- **Source code URL must include the tag** (`/tree/v1.0.15`) so Grafana checks the correct ref
+- Without the tag, Grafana checks `main` branch which has commits after v1.0.15, causing mismatch errors
+
+---
+
 ## Grafana Validation Status
 
 **Submitted:** 2026-01-25
 
-### Current Errors (Need to fix submission URL)
+### Previous Errors (Fixed by using correct URLs)
 
-| Item | Status | Notes |
-|------|--------|-------|
-| no-go-manifest | ❌ ERROR | Grafana can't find go.mod - need correct ref |
-| js-map-no-match | ❌ ERROR | Source maps don't match - Grafana checking wrong ref |
-| unsigned-plugin | ⚠️ Expected | Will be signed after Grafana approves |
+| Error | Cause | Fix |
+|-------|-------|-----|
+| no-go-manifest | Grafana checking wrong ref | Use `/tree/v1.0.15` in Source code URL |
+| js-map-no-match | Source at main ≠ source at tag | Use `/tree/v1.0.15` in Source code URL |
 
-### Root Cause
+### Fixed Issues
 
-**Grafana is checking the wrong git ref!** The source code at `main` branch has commits after v1.0.15, causing the mismatch.
-
-### Solution: Provide Source Code URL with Tag Reference
-
-When submitting to Grafana, use **one of these URL formats**:
-
-**Option 1 - Tree URL:**
-```
-https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
-```
-
-**Option 2 - Archive URL (source zip):**
-```
-https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/archive/refs/tags/v1.0.15.zip
-```
-
-**Option 3 - If there's a separate ref field:**
-- Repository: `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource`
-- Ref/Tag: `v1.0.15`
-
-### Previously Fixed Issues
-
-| Item | Status | Notes |
-|------|--------|-------|
-| binary-executable-permissions | ✅ FIXED | All binaries have 0755 |
-| missing-readme | ✅ FIXED | README.md included |
-| screenshots | ✅ FIXED | All PNGs included |
+| Item | Status |
+|------|--------|
+| binary-executable-permissions | ✅ FIXED |
+| missing-readme | ✅ FIXED |
+| screenshots | ✅ FIXED |
+| unsigned-plugin | ⚠️ Expected (will be signed after approval) |
 
 ---
 
-## Grafana Plugin Submission
+## Plugin Information
 
 **Plugin ID:** `tobiasworkstech-parquets3-datasource`
 
 **Repository:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
 
-**Source Code (with tag):** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
-
-To submit/update on Grafana Plugin Catalog:
-1. Go to https://grafana.com/auth/sign-in/
-2. Navigate to My Account > My Plugins
-3. Click 'Submit Plugin' or 'Update Submission'
-4. **IMPORTANT:** Use the source code URL with the tag reference:
-   ```
-   https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15
-   ```
-5. Follow the submission wizard
+**Description:** Grafana datasource plugin for reading Parquet files from S3-compatible storage
 
 ---
 

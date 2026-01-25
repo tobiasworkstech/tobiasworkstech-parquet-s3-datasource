@@ -89,6 +89,24 @@ jobs:
             exit 1
           fi
 
+      - name: Verify dist contents before upload
+        run: |
+          echo "=== dist/ contents ==="
+          ls -la dist/
+          echo ""
+          echo "=== dist/img/ contents ==="
+          ls -la dist/img/
+          echo ""
+          echo "=== Checking required files ==="
+          for file in dist/img/screenshot_datasource_config.png dist/img/screenshot_explore_view.png dist/img/screenshot_explore_full.png dist/README.md; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists ($(stat -c%s "$file" 2>/dev/null || stat -f%z "$file") bytes)"
+            else
+              echo "✗ $file MISSING"
+              exit 1
+            fi
+          done
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -114,6 +132,23 @@ jobs:
         with:
           name: plugin-dist
           path: dist/
+
+      - name: Verify dist contents after download
+        run: |
+          echo "=== dist/ contents after download ==="
+          ls -la dist/
+          echo ""
+          echo "=== dist/img/ contents ==="
+          ls -la dist/img/ || echo "img/ directory missing!"
+          echo ""
+          echo "=== Checking required files ==="
+          for file in dist/img/screenshot_datasource_config.png dist/img/screenshot_explore_view.png dist/img/screenshot_explore_full.png dist/README.md; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file MISSING"
+            fi
+          done
 
       - name: Set executable permissions
         run: |
@@ -159,15 +194,25 @@ jobs:
           PLUGIN_ID="tobiasworkstech-parquets3-datasource"
           VERSION="${GITHUB_REF#refs/tags/v}"
 
+          # Verify img folder before packaging
+          echo "=== Contents before packaging ==="
+          ls -la dist/img/
+
           # Rename dist to plugin ID (correct packaging format)
           mv dist "${PLUGIN_ID}"
 
           # Create zip archive with folder structure
           zip -r "${PLUGIN_ID}-${VERSION}.zip" "${PLUGIN_ID}"
 
-          # Verify structure
-          echo "Verifying zip structure:"
-          unzip -l "${PLUGIN_ID}-${VERSION}.zip" | head -20
+          # Verify structure - show ALL files
+          echo ""
+          echo "=== Verifying zip structure ==="
+          unzip -l "${PLUGIN_ID}-${VERSION}.zip"
+
+          # Verify screenshots are in zip
+          echo ""
+          echo "=== Checking screenshots in zip ==="
+          unzip -l "${PLUGIN_ID}-${VERSION}.zip" | grep screenshot || echo "WARNING: No screenshots found in zip!"
 
           # Calculate SHA1 checksum
           echo ""

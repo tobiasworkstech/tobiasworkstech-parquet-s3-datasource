@@ -559,7 +559,7 @@ func (d *Datasource) handleSchema(ctx context.Context, req *backend.CallResource
 			Body:   []byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())),
 		})
 	}
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 
 	// Read schema
 	fileData, err := io.ReadAll(result.Body)

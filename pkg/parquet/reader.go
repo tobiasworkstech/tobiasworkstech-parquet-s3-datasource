@@ -82,7 +82,7 @@ func ReadParquetFromS3(
 	if err != nil {
 		return nil, fmt.Errorf("failed to get object: %w", err)
 	}
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 
 	fileData, err := io.ReadAll(result.Body)
 	if err != nil {
@@ -147,12 +147,9 @@ func ReadParquetData(
 	rowCount := 0
 	for _, rowGroup := range pf.RowGroups() {
 		rows := rowGroup.Rows()
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
-		for {
-			if maxRows > 0 && rowCount >= maxRows {
-				break
-			}
+		for maxRows <= 0 || rowCount < maxRows {
 
 			row := make([]parquet.Value, len(fields))
 			n, err := rows.ReadRows([]parquet.Row{row})

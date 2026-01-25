@@ -45,10 +45,10 @@ jobs:
 
       - name: Lint backend
         # Upgrade to v6 of the official action
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
           # Explicitly request v2.x to support Go 1.25+
-          version: v2.4
+          version: v2.6
           # Optional: Disable cache if you keep getting 'Cache service 400' errors
           skip-cache: false
           # Ensure it uses the right output format for v2

@@ -1,6 +1,6 @@
 module github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource
 
-go 1.25.5
+go 1.23
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.24.0

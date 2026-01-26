@@ -1,27 +1,24 @@
 # Release Information
 
-## Latest Release: v1.0.15
+## Latest Release: v1.0.16
 
-**Release Date:** 2026-01-25
+**Release Date:** 2026-01-26
 
-**Download:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/tag/v1.0.15
+**Download:** https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/tag/v1.0.16
 
 ### Checksums
 
-**File:** `tobiasworkstech-parquets3-datasource-1.0.15.zip`
+**File:** `tobiasworkstech-parquets3-datasource-1.0.16.zip`
 
 | Algorithm | Checksum |
 |-----------|----------|
-| MD5 | `179c4f119a378f74f370b90d92f16912` |
-| SHA1 | `9e02ccfadc0da40e14f56d943efe27c42af916e5` |
-| SHA256 | `e05bb4a5d559ccaf62157756488c53bb9a6f963a9a879e3710210a768f920dce` |
+| MD5 | `e55450c073bd3e72db413ceedef1395b` |
+| SHA1 | `e0948403e6c3158ea38a5bc36c8e154ad346dbb6` |
+| SHA256 | `bdb77b75b39bba654901f6de1495b7cf1bfe5f69b5e7f60db792d38d2cf1f240` |
 
-### Changes in v1.0.15
+### Changes in v1.0.16
 
-- Add screenshot PNG files to git repository (were in .gitignore)
-- Set executable permissions (0755) on all binary files
-- Copy README.md to dist folder
-- All Grafana validation errors fixed
+- Version bump for resubmission
 
 ### Package Contents
 
@@ -39,29 +36,32 @@
 
 | Field | Value |
 |-------|-------|
-| **Plugin URL (zip file)** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/download/v1.0.15/tobiasworkstech-parquets3-datasource-1.0.15.zip` |
-| **MD5 or SHA1** | `179c4f119a378f74f370b90d92f16912` |
-| **Source code URL** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.15` |
+| **Plugin URL (zip file)** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/releases/download/v1.0.16/tobiasworkstech-parquets3-datasource-1.0.16.zip` |
+| **MD5 or SHA1** | `e55450c073bd3e72db413ceedef1395b` |
+| **Source code URL** | `https://github.com/tobiasworkstech/tobiasworkstech-parquets3-datasource/tree/v1.0.16` |
 | **Testing guidance** | `Use docker-compose in /docker folder to spin up Grafana + MinIO with sample data. See README for details.` |
 | **Provisioning provided** | Yes |
 
 ### Important Notes
 
-- **Source code URL must include the tag** (`/tree/v1.0.15`) so Grafana checks the correct ref
-- Without the tag, Grafana checks `main` branch which has commits after v1.0.15, causing mismatch errors
+- **Source code URL must include the tag** (`/tree/v1.0.16`) so Grafana checks the correct ref
+- Without the tag, Grafana checks `main` branch which has commits after v1.0.16, causing mismatch errors
+- Using `/releases/tag/` instead of `/tree/` causes validation failures
 
 ---
 
 ## Grafana Validation Status
 
-**Submitted:** 2026-01-25
+**Submitted:** 2026-01-26 (v1.0.16)
 
 ### Previous Errors (Fixed by using correct URLs)
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| no-go-manifest | Grafana checking wrong ref | Use `/tree/v1.0.15` in Source code URL |
-| js-map-no-match | Source at main ≠ source at tag | Use `/tree/v1.0.15` in Source code URL |
+| no-go-manifest | Grafana checking wrong ref | Use `/tree/v1.0.16` in Source code URL |
+| js-map-no-match | Source at main ≠ source at tag | Use `/tree/v1.0.16` in Source code URL |
+
+**Note:** v1.0.16 first submission used `/releases/tag/` URL which failed. Resubmit with `/tree/` URL.
 
 ### Fixed Issues
 

@@ -20,4 +20,5 @@ jobs:
       - uses: grafana/plugin-actions/build-plugin@main
         with:
           go-version: '1.24'
-          policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+          # Skip signing - plugin will be signed after Grafana catalog approval
+          # policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
